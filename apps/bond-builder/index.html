@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bond Builder — Master Chemical Bonds</title>
+<meta name="theme-color" content="#1e1b4b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#1b1533; --bg2:#08070f;
+    --card:#1e1938; --card-2:#262050;
+    --text:#f1eefc; --muted:#9a92c2;
+    --cyan:#22d3ee; --purple:#8b7bf0;
+    --green:#34d399; --red:#f87171; --gold:#fbbf24;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;min-height:100%;}
+  body{
+    min-height:100dvh;
+    background:radial-gradient(circle at top, var(--bg1), var(--bg2) 60%);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  h1,h2,h3,.heading{font-family:'Baloo 2',sans-serif;}
+  button{font-family:inherit;}
+  .bgdots{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;}
+  .bgdots span{position:absolute;width:3px;height:3px;border-radius:50%;background:#5b5a8a;}
+
+  /* ---- HOME ---- */
+  #home{position:relative;z-index:1;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+  .home-inner{max-width:560px;width:100%;text-align:center;}
+  .logo{width:96px;height:96px;border-radius:50%;margin:0 auto 20px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;box-shadow:0 10px 40px -8px rgba(167,139,250,.55);}
+  .logo svg{width:44px;height:44px;stroke:#0b0a1f;}
+  h1.title{font-size:44px;font-weight:800;margin:0 0 10px;background:linear-gradient(135deg,#dff6ff,#c9c3ff);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-0.01em;}
+  .sub{color:var(--muted);font-size:15px;margin:0 0 24px;line-height:1.5;}
+  .stats-row{display:flex;justify-content:center;gap:22px;margin-bottom:26px;font-weight:600;color:#f3d98a;}
+  .stats-row span{display:inline-flex;align-items:center;gap:6px;}
+  .cta-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:36px;}
+  .btn{border:none;cursor:pointer;border-radius:999px;padding:14px 28px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:transform .15s ease, filter .15s ease;}
+  .btn:active{transform:scale(.96);}
+  .btn-primary{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#0b0a1f;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost{background:#ffffff1f;color:var(--text);border:1.5px solid #ffffff45;}
+  .btn-ghost:hover{background:#ffffff30;border-color:#ffffff66;}
+  .btn-ghost:disabled{color:var(--muted);cursor:not-allowed;}
+  .feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;text-align:left;}
+  @media(max-width:480px){.feature-grid{grid-template-columns:1fr;} h1.title{font-size:34px;}}
+  .feature{background:#ffffff08;border:1px solid #ffffff12;border-radius:14px;padding:14px 16px;}
+  .feature b{display:block;color:#cdeeff;font-size:14.5px;margin-bottom:3px;}
+  .feature span{font-size:12.5px;color:var(--muted);}
+
+  /* ---- MAP ---- */
+  #map{position:relative;z-index:1;min-height:100dvh;padding:0 0 60px;display:none;}
+  .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:linear-gradient(180deg,rgba(2,6,23,.9),rgba(2,6,23,.4) 90%,transparent);backdrop-filter:blur(6px);}
+  .link-btn{background:none;border:none;color:var(--muted);font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+  .link-btn:hover{color:var(--text);}
+  .map-title{font-size:20px;font-weight:800;}
+  .star-total{color:var(--gold);font-weight:700;display:flex;align-items:center;gap:6px;}
+  .worlds{max-width:900px;margin:10px auto 0;padding:0 20px;}
+  .world-block{margin-bottom:34px;}
+  .world-label{font-size:11.5px;letter-spacing:.12em;color:var(--cyan);font-weight:700;text-transform:uppercase;margin-bottom:2px;}
+  .world-title{font-size:19px;font-weight:800;margin:0 0 14px;}
+  .level-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
+  .lvl-card{position:relative;background:var(--card);border:1px solid #ffffff10;border-radius:14px;padding:16px;cursor:pointer;transition:transform .15s ease,border-color .15s ease;min-height:112px;}
+  .lvl-card:hover:not(.locked){transform:translateY(-3px);border-color:#ffffff2a;}
+  .lvl-card.locked{opacity:.45;cursor:not-allowed;}
+  .lvl-card.done{border-color:#34d39955;}
+  .lvl-num{font-size:11px;color:var(--muted);margin-bottom:4px;}
+  .lvl-name{font-size:14.5px;font-weight:700;margin-bottom:10px;line-height:1.25;}
+  .lvl-stars{font-size:12px;letter-spacing:1px;margin-bottom:6px;}
+  .lvl-type{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+  .lock-icon{position:absolute;top:12px;right:12px;color:var(--muted);font-size:14px;}
+
+  /* ---- LEVEL VIEW ---- */
+  #level{position:fixed;inset:0;z-index:20;background:radial-gradient(circle at top, var(--bg1), var(--bg2) 60%);display:none;flex-direction:column;}
+  .lvl-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;flex-shrink:0;}
+  .lvl-crumb{text-align:center;flex:1;}
+  .lvl-crumb .eyebrow{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+  .lvl-crumb .name{font-weight:800;font-size:16px;}
+  .lvl-meta{display:flex;align-items:center;gap:14px;font-weight:700;font-size:14px;}
+  .mistakes{color:var(--red);} .hints-left{color:var(--gold);display:flex;align-items:center;gap:4px;}
+  .lvl-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;text-align:center;}
+  .prompt{font-size:18px;color:#cfd3ee;margin-bottom:34px;max-width:520px;line-height:1.5;}
+  .prompt b{color:var(--cyan);} .prompt em{color:var(--green);font-style:normal;}
+
+  .atom-badge{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#0b0a1f;position:relative;margin:0 auto;box-shadow:0 0 30px -6px currentColor;}
+  .atom-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);}
+  .atom-label{margin-top:14px;color:var(--muted);font-size:13.5px;}
+
+  .choice-grid{display:grid;grid-template-columns:repeat(4,64px);gap:12px;margin-top:8px;}
+  .choice-btn{width:64px;height:64px;border-radius:14px;background:#ffffff1f;border:1.5px solid #ffffff4d;color:var(--text);font-size:20px;font-weight:700;cursor:pointer;}
+  .choice-btn:hover{background:#ffffff33;border-color:#ffffff70;}
+  .choice-btn.wrong{border-color:var(--red);background:#f8717140;}
+  .choice-btn.correct{border-color:var(--green);background:#34d39950;}
+
+  .mc-row{display:flex;gap:16px;}
+  .mc-btn{padding:16px 30px;border-radius:14px;background:#ffffff1f;border:1.5px solid #ffffff4d;color:var(--text);font-size:16px;font-weight:700;cursor:pointer;min-width:140px;}
+  .mc-btn:hover{background:#ffffff33;border-color:#ffffff70;}
+  .mc-btn.wrong{border-color:var(--red);background:#f8717140;}
+  .mc-btn.correct{border-color:var(--green);background:#34d39950;}
+
+  .stage-actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;justify-content:center;}
+  .stage-note{margin-top:14px;color:var(--muted);font-size:13.5px;}
+  .stage-note b{color:var(--text);}
+
+  .field{position:relative;display:flex;align-items:center;justify-content:center;gap:60px;min-height:200px;}
+  .field.wrap{flex-wrap:wrap;row-gap:40px;}
+  .fnode{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .fnode .name{color:var(--muted);font-size:12.5px;}
+  .fnode .charge{font-size:13px;font-weight:700;margin-top:4px;}
+  .bolt{font-size:22px;color:var(--gold);}
+
+  .counter-row{display:flex;gap:46px;justify-content:center;margin:26px 0 6px;}
+  .counter{text-align:center;}
+  .counter .ion{font-size:22px;font-weight:800;margin-bottom:10px;}
+  .counter .ctr-controls{display:flex;align-items:center;gap:14px;}
+  .round-btn{width:34px;height:34px;border-radius:50%;background:#ffffff26;border:1px solid #ffffff40;color:var(--text);font-size:18px;cursor:pointer;}
+  .round-btn:hover{background:#ffffff3d;border-color:#ffffff66;}
+  .counter .val{font-size:19px;font-weight:700;min-width:20px;}
+
+  .ion-card{border-radius:16px;padding:20px 26px;min-width:120px;font-weight:800;font-size:22px;}
+  .ion-card .sub{display:block;font-size:11px;letter-spacing:.1em;color:inherit;opacity:.8;font-weight:700;text-transform:uppercase;margin-top:6px;}
+
+  .molecule-field{position:relative;width:340px;height:280px;margin:0 auto;}
+  .m-atom{position:absolute;width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;color:#0b0a1f;transform:translate(-50%,-50%);box-shadow:0 0 22px -4px currentColor;}
+  .m-label{position:absolute;transform:translate(-50%,0);font-size:11px;color:var(--muted);white-space:nowrap;}
+  svg.bond-svg{position:absolute;inset:0;overflow:visible;}
+  .bond-line{stroke:#3d3a6b;stroke-width:3;transition:stroke .2s ease;}
+  .bond-line.lit{stroke:var(--cyan);}
+  .pair-dot{fill:var(--cyan);filter:drop-shadow(0 0 4px #22d3ee);}
+  .m-edot{fill:var(--cyan);filter:drop-shadow(0 0 3px #22d3ee);}
+
+  .success-card{position:absolute;inset:0;background:#0b0a1fcc;backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:20px;z-index:5;animation:pop .25s ease;}
+  @keyframes pop{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+  .success-emoji{font-size:40px;margin-bottom:6px;}
+  .success-title{font-size:26px;font-weight:800;color:#a6f5d0;margin-bottom:14px;}
+  .success-formula{font-size:40px;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:12px;}
+  .success-formula sub{font-size:.6em;}
+  .success-explain{max-width:420px;color:var(--muted);font-size:14px;padding:0 20px;margin-bottom:22px;}
+  .success-stars{margin-bottom:18px;font-size:22px;letter-spacing:3px;}
+
+  .hint-btn{position:fixed;left:22px;bottom:22px;background:#ffffff20;border:1.5px solid #ffffff45;color:var(--gold);padding:10px 18px;border-radius:999px;font-weight:700;font-size:13.5px;cursor:pointer;display:flex;align-items:center;gap:8px;z-index:6;}
+  .hint-btn:hover{background:#ffffff33;}
+  .hint-box{position:fixed;left:22px;bottom:76px;max-width:280px;background:var(--card-2);border:1px solid #ffffff1c;border-radius:12px;padding:14px 16px;font-size:13px;color:#dcd9ff;z-index:6;display:none;}
+
+  ::selection{background:#a78bfa66;}
+  a.credit{position:fixed;right:14px;bottom:12px;font-size:11px;color:#57548a;text-decoration:none;z-index:6;}
+</style>
+</head>
+<body>
+<div class="bgdots" id="bgdots"></div>
+
+<div id="home">
+  <div class="home-inner">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 9V3"/></svg></div>
+    <h1 class="title">Bond Builder</h1>
+    <p class="sub">Master ionic, covalent, and polyatomic bonds through play.</p>
+    <div class="stats-row">
+      <span>⭐ <b id="home-stars">0</b></span>
+      <span>🏆 <b id="home-xp">0</b> XP</span>
+    </div>
+    <div class="cta-row">
+      <button class="btn btn-primary" id="play-btn">Play →</button>
+      <button class="btn btn-ghost" id="adaptive-btn">🧠 Adaptive Practice</button>
+    </div>
+    <div class="feature-grid">
+      <div class="feature"><b>18 Worlds</b><span>From atoms to polyatomics</span></div>
+      <div class="feature"><b>146 Levels</b><span>Ionic, covalent, polyatomic</span></div>
+      <div class="feature"><b>Progressive Hints</b><span>Tiered guidance, no spoilers</span></div>
+      <div class="feature"><b>Adaptive Practice</b><span>Reviews your weak spots</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="map">
+  <div class="topbar">
+    <button class="link-btn" id="map-menu-btn">← Menu</button>
+    <div class="map-title">Choose your challenge</div>
+    <div class="star-total">⭐ <span id="map-stars">0</span></div>
+  </div>
+  <div class="worlds" id="worlds"></div>
+</div>
+
+<div id="level">
+  <div class="lvl-topbar">
+    <button class="link-btn" id="exit-btn">← Exit</button>
+    <div class="lvl-crumb"><div class="eyebrow" id="crumb-world"></div><div class="name" id="crumb-title"></div></div>
+    <div class="lvl-meta"><span class="mistakes">✕ <span id="mistake-count">0</span></span><span class="hints-left">💡 <span id="hint-count">0</span>/3</span></div>
+  </div>
+  <div class="lvl-stage" id="stage"></div>
+  <button class="hint-btn" id="hint-btn">💡 Hint</button>
+  <div class="hint-box" id="hint-box"></div>
+</div>
+
+<a class="credit" href="#" onclick="return false">Bond Builder — Study Atlas</a>
+
+<script>
+/* ================= DATA ================= */
+const ELEMENTS = {
+  H:{name:'Hydrogen',valence:1,metal:false,color:'#e5e7eb'},
+  Li:{name:'Lithium',valence:1,metal:true,color:'#f472b6'},
+  Na:{name:'Sodium',valence:1,metal:true,color:'#f5a95f'},
+  K:{name:'Potassium',valence:1,metal:true,color:'#e29cf2'},
+  Mg:{name:'Magnesium',valence:2,metal:true,color:'#c9a0e8'},
+  Ca:{name:'Calcium',valence:2,metal:true,color:'#93c5fd'},
+  Al:{name:'Aluminum',valence:3,metal:true,color:'#b0b3bd'},
+  C:{name:'Carbon',valence:4,metal:false,color:'#9ca3af'},
+  N:{name:'Nitrogen',valence:5,metal:false,color:'#60a5fa'},
+  O:{name:'Oxygen',valence:6,metal:false,color:'#f08a7a'},
+  F:{name:'Fluorine',valence:7,metal:false,color:'#7be0c4'},
+  Cl:{name:'Chlorine',valence:7,metal:false,color:'#7fd9a0'},
+  Br:{name:'Bromine',valence:7,metal:false,color:'#c08a5a'},
+  S:{name:'Sulfur',valence:6,metal:false,color:'#f4e07a'},
+  P:{name:'Phosphorus',valence:5,metal:false,color:'#f0a8d0'},
+};
+const IONS = {
+  OH:{name:'Hydroxide',charge:-1}, NO3:{name:'Nitrate',charge:-1},
+  SO4:{name:'Sulfate',charge:-2}, CO3:{name:'Carbonate',charge:-2},
+  PO4:{name:'Phosphate',charge:-3}, NH4:{name:'Ammonium',charge:1},
+};
+function metalCharge(el){ return ELEMENTS[el].valence; }
+function nonmetalCharge(el){ return ELEMENTS[el].valence - 8; }
+function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){[a,b]=[b,a%b];} return a||1; }
+
+let uid = 0;
+function V(el){ return {id:++uid, type:'valence', title:`${ELEMENTS[el].name}'s Valence`, el}; }
+function VT(el,title){ return {id:++uid, type:'valence', title, el}; }
+function C(el){ return {id:++uid, type:'classify', title:`Classify ${ELEMENTS[el].name}`, el}; }
+function CT(el,title){ return {id:++uid, type:'classify', title, el}; }
+function I(metal,nonmetal,titleOverride){
+  const name = ionicName(metal,nonmetal);
+  return {id:++uid, type:'ionic', title: titleOverride || name.title, metal, nonmetal};
+}
+function ionicName(metal,nonmetal){
+  const mc = metalCharge(metal), nc = nonmetalCharge(nonmetal);
+  const g = gcd(mc,nc);
+  const cM = Math.abs(nc)/g, cN = Math.abs(mc)/g;
+  const suffixMap = {O:'Oxide',F:'Fluoride',Cl:'Chloride',Br:'Bromide',N:'Nitride',S:'Sulfide',P:'Phosphide'};
+  return { title:`${ELEMENTS[metal].name} ${cN>1?'':''}${suffixMap[nonmetal]||nonmetal}`.trim(), cM, cN };
+}
+function CV(name, center, arms, titleOverride){
+  return {id:++uid, type:'covalent', title: titleOverride||name, name, center, arms};
+}
+function CVG(name, atoms, bonds, titleOverride){
+  return {id:++uid, type:'covalent', title: titleOverride||name, name, graph:{atoms,bonds}};
+}
+function P(cation, anion, titleOverride){
+  return {id:++uid, type:'polyionic', title: titleOverride || polyName(cation,anion), cation, anion};
+}
+function polyName(cation, anion){
+  const cIsIon = !!IONS[cation], aIsIon = !!IONS[anion];
+  const cName = cIsIon ? IONS[cation].name : ELEMENTS[cation].name;
+  const aName = aIsIon ? IONS[anion].name : (({O:'Oxide',F:'Fluoride',Cl:'Chloride',Br:'Bromide'})[anion]||anion);
+  return `${cName} ${aName}`;
+}
+
+const WORLDS = [
+  {title:'Atoms & Electrons', levels:[V('Na'),V('O'),V('Cl')]},
+  {title:'Metals vs Non-metals', levels:[C('Na'),C('Cl'),C('Mg')]},
+  {title:'Ionic Bonds', levels:[I('Na','Cl'),I('Mg','O'),I('Ca','F'),I('Al','O')]},
+  {title:'Covalent Bonds', levels:[
+    CV('Hydrogen Molecule','H',[{el:'H',order:1}]),
+    CV('Water','O',[{el:'H',order:1},{el:'H',order:1}]),
+    CV('Oxygen Gas','O',[{el:'O',order:2}]),
+    CV('Methane','C',[{el:'H',order:1},{el:'H',order:1},{el:'H',order:1},{el:'H',order:1}]),
+    CV('Nitrogen Gas','N',[{el:'N',order:3}]),
+    CV('Carbon Dioxide','C',[{el:'O',order:2},{el:'O',order:2}]),
+    CV('Ammonia','N',[{el:'H',order:1},{el:'H',order:1},{el:'H',order:1}]),
+  ]},
+  {title:'Master Chemist', levels:[I('K','Br'),CV('Hydrogen Chloride','Cl',[{el:'H',order:1}]),I('Li','F')]},
+  {title:'Valence Mastery', levels:[V('Li'),V('C'),V('N'),V('F'),V('Mg'),V('Al'),V('K'),V('Ca'),V('Br'),V('H')]},
+  {title:'Metals vs Non-metals', levels:[C('Li'),C('K'),C('Ca'),C('Al'),C('H'),C('C'),C('N'),C('F'),C('O'),C('Br')]},
+  {title:'Simple Salts', levels:[I('Li','Cl'),I('Li','Br'),I('Na','F'),I('Na','Br'),I('K','F'),I('K','Cl'),I('Ca','O'),I('Li','O'),I('Na','O'),I('K','O')]},
+  {title:'Charge Balancing', levels:[I('Mg','F'),I('Mg','Cl'),I('Mg','Br'),I('Ca','Cl'),I('Ca','Br'),I('Al','F'),I('Al','Cl'),I('Al','Br'),I('Mg','N'),I('Ca','N')]},
+  {title:'Diatomics & Beyond', levels:[
+    CV('Fluorine Gas','F',[{el:'F',order:1}]),
+    CV('Chlorine Gas','Cl',[{el:'Cl',order:1}]),
+    CV('Bromine Liquid','Br',[{el:'Br',order:1}]),
+    CV('Hydrogen Fluoride','F',[{el:'H',order:1}]),
+    CV('Hydrogen Bromide','Br',[{el:'H',order:1}]),
+    CV('Carbon Monoxide','C',[{el:'O',order:3}]),
+    CV('Carbon Tetrafluoride','C',[{el:'F',order:1},{el:'F',order:1},{el:'F',order:1},{el:'F',order:1}]),
+    CV('Carbon Tetrachloride','C',[{el:'Cl',order:1},{el:'Cl',order:1},{el:'Cl',order:1},{el:'Cl',order:1}]),
+    CV('Carbon Tetrabromide','C',[{el:'Br',order:1},{el:'Br',order:1},{el:'Br',order:1},{el:'Br',order:1}]),
+    CV('Nitrogen Trifluoride','N',[{el:'F',order:1},{el:'F',order:1},{el:'F',order:1}]),
+  ]},
+  {title:'Molecule Shapes', levels:[
+    CV('Nitrogen Trichloride','N',[{el:'Cl',order:1},{el:'Cl',order:1},{el:'Cl',order:1}]),
+    CV('Nitrogen Tribromide','N',[{el:'Br',order:1},{el:'Br',order:1},{el:'Br',order:1}]),
+    CV('Oxygen Difluoride','O',[{el:'F',order:1},{el:'F',order:1}]),
+    CV('Dichlorine Monoxide','O',[{el:'Cl',order:1},{el:'Cl',order:1}]),
+    CV('Dibromine Monoxide','O',[{el:'Br',order:1},{el:'Br',order:1}]),
+    Object.assign(CV('Hydrogen Cyanide','C',[{el:'H',order:1},{el:'N',order:3}]),{formulaOverride:'HCN'}),
+    Object.assign(CV('Cyanogen Chloride','C',[{el:'Cl',order:1},{el:'N',order:3}]),{formulaOverride:'ClCN'}),
+    CV('Formaldehyde','C',[{el:'H',order:1},{el:'H',order:1},{el:'O',order:2}]),
+    CVG('Acetylene',[{id:'a',el:'H',x:20,y:50},{id:'b',el:'C',x:38,y:50},{id:'c',el:'C',x:62,y:50},{id:'d',el:'H',x:80,y:50}],
+        [{a:'a',b:'b',order:1},{a:'b',b:'c',order:3},{a:'c',b:'d',order:1}]),
+    CVG('Ethylene',[{id:'h1',el:'H',x:14,y:30},{id:'h2',el:'H',x:14,y:70},{id:'c1',el:'C',x:38,y:50},{id:'c2',el:'C',x:62,y:50},{id:'h3',el:'H',x:86,y:30},{id:'h4',el:'H',x:86,y:70}],
+        [{a:'h1',b:'c1',order:1},{a:'h2',b:'c1',order:1},{a:'c1',b:'c2',order:2},{a:'c2',b:'h3',order:1},{a:'c2',b:'h4',order:1}]),
+  ]},
+  {title:'Halide Hunt', levels:[
+    VT('Cl',"Chlorine's Valence Again"), VT('Br',"Bromine's Outer Shell"),
+    CT('F','Is Fluorine a Metal?'), CT('Br','Is Bromine a Metal?'),
+    I('Li','F','Lithium Fluoride Redux'), I('K','Br','Potassium Bromide Redux'),
+    I('Ca','F','Fluorite'), I('K','Cl',"Rock Salt's Cousin"),
+    I('Al','F','Aluminum in Toothpaste?'), I('Al','Cl','Aluminum Trichloride'),
+  ]},
+  {title:'Oxide Odyssey', levels:[
+    I('Na','O','Sodium Oxide Encore'), I('K','O','Potassium Oxide Encore'), I('Li','O','Lithium Oxide Encore'),
+    I('Ca','O','Quicklime'), I('Mg','O','Magnesia'), I('Al','O','Corundum'),
+    CV('Carbon Dioxide Redux','C',[{el:'O',order:2},{el:'O',order:2}]),
+    CV('Carbon Monoxide Redux','C',[{el:'O',order:3}]),
+    CV('Oxygen Difluoride Redux','O',[{el:'F',order:1},{el:'F',order:1}]),
+    CV('Oxygen Gas Redux','O',[{el:'O',order:2}]),
+  ]},
+  {title:'Nitrogen & Hydrogen', levels:[
+    V('N'), V('H'), C('N'), C('H'),
+    CV('Ammonia Redux','N',[{el:'H',order:1},{el:'H',order:1},{el:'H',order:1}]),
+    CV('Hydrogen Gas Redux','H',[{el:'H',order:1}]),
+    CV('Water Redux','O',[{el:'H',order:1},{el:'H',order:1}]),
+    CV('Hydrogen Chloride Redux','Cl',[{el:'H',order:1}]),
+    CV('Nitrogen Gas Redux','N',[{el:'N',order:3}]),
+    CV('Methane Redux','C',[{el:'H',order:1},{el:'H',order:1},{el:'H',order:1},{el:'H',order:1}]),
+  ]},
+  {title:'Grand Finale', levels:[
+    VT('Al',"Aluminum's Valence"), CT('Ca','Classify Calcium'),
+    I('Na','Cl','Table Salt Finale'), I('Ca','F','Fluorite Finale'), I('Al','O','Sapphire Finale'),
+    CV('Hydrogen Finale','H',[{el:'H',order:1}]),
+    CV('Oxygen Finale','O',[{el:'O',order:2}]),
+    CV('Nitrogen Finale','N',[{el:'N',order:3}]),
+    CV('Water Finale','O',[{el:'H',order:1},{el:'H',order:1}]),
+    CV('Methane Finale','C',[{el:'H',order:1},{el:'H',order:1},{el:'H',order:1},{el:'H',order:1}]),
+  ]},
+  {title:'Polyatomic Ions', levels:[
+    P('Na','OH','Sodium Hydroxide'), P('K','OH','Potassium Hydroxide'),
+    P('NH4','Cl','Ammonium Chloride'), P('Na','NO3','Sodium Nitrate'), P('K','NO3','Potassium Nitrate'),
+    P('Ca','OH','Calcium Hydroxide'), P('Mg','OH','Magnesium Hydroxide'),
+  ]},
+  {title:'Sulfates & Carbonates', levels:[
+    P('Na','SO4','Sodium Sulfate'), P('K','SO4','Potassium Sulfate'), P('Ca','SO4','Calcium Sulfate'),
+    P('NH4','SO4','Ammonium Sulfate'), P('Na','CO3','Sodium Carbonate'), P('Ca','CO3','Calcium Carbonate'),
+    P('K','PO4','Potassium Phosphate'), P('Ca','PO4','Calcium Phosphate'), P('NH4','NO3','Ammonium Nitrate'),
+  ]},
+  {title:'More Molecules', levels:[
+    CV('Sulfur Dioxide','S',[{el:'O',order:2},{el:'O',order:2}]),
+    CV('Sulfur Trioxide','S',[{el:'O',order:2},{el:'O',order:2},{el:'O',order:2}]),
+    CV('Hydrogen Sulfide','S',[{el:'H',order:1},{el:'H',order:1}]),
+    CV('Phosphine','P',[{el:'H',order:1},{el:'H',order:1},{el:'H',order:1}]),
+    CV('Phosphorus Trichloride','P',[{el:'Cl',order:1},{el:'Cl',order:1},{el:'Cl',order:1}]),
+    CV('Nitric Oxide','N',[{el:'O',order:2}]),
+    CV('Nitrogen Dioxide','N',[{el:'O',order:1},{el:'O',order:2}]),
+    CVG('Hydrogen Peroxide',[{id:'h1',el:'H',x:16,y:50},{id:'o1',el:'O',x:38,y:40},{id:'o2',el:'O',x:62,y:60},{id:'h2',el:'H',x:84,y:50}],
+        [{a:'h1',b:'o1',order:1},{a:'o1',b:'o2',order:1},{a:'o2',b:'h2',order:1}]),
+    CVG('Ethane',[{id:'h1',el:'H',x:14,y:30},{id:'h2',el:'H',x:14,y:70},{id:'h3',el:'H',x:30,y:14},{id:'c1',el:'C',x:38,y:50},{id:'c2',el:'C',x:62,y:50},{id:'h4',el:'H',x:70,y:86},{id:'h5',el:'H',x:86,y:30},{id:'h6',el:'H',x:86,y:70}],
+        [{a:'h1',b:'c1',order:1},{a:'h2',b:'c1',order:1},{a:'h3',b:'c1',order:1},{a:'c1',b:'c2',order:1},{a:'c2',b:'h4',order:1},{a:'c2',b:'h5',order:1},{a:'c2',b:'h6',order:1}]),
+    CVG('Methanol',[{id:'h1',el:'H',x:10,y:30},{id:'h2',el:'H',x:10,y:70},{id:'h3',el:'H',x:26,y:12},{id:'c1',el:'C',x:34,y:50},{id:'o1',el:'O',x:62,y:50},{id:'h4',el:'H',x:84,y:50}],
+        [{a:'h1',b:'c1',order:1},{a:'h2',b:'c1',order:1},{a:'h3',b:'c1',order:1},{a:'c1',b:'o1',order:1},{a:'o1',b:'h4',order:1}]),
+  ]},
+];
+
+/* flatten with world/level numbering */
+const LEVELS = [];
+WORLDS.forEach((w,wi)=>{
+  w.levels.forEach(lv=>{
+    lv.world = wi; lv.num = LEVELS.length+1;
+    LEVELS.push(lv);
+  });
+});
+
+/* ================= STATE ================= */
+const STORE_KEY = 'atlas-bond-builder-progress';
+let progress = JSON.parse(localStorage.getItem(STORE_KEY) || '{"stars":{},"xp":0,"weak":{}}');
+function saveProgress(){ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }
+function totalStars(){ return Object.values(progress.stars).reduce((a,b)=>a+b,0); }
+function isUnlocked(num){ return num===1 || progress.stars[num-1] !== undefined; }
+
+/* ================= BACKGROUND DOTS ================= */
+(function(){
+  const el = document.getElementById('bgdots'); let html='';
+  for(let i=0;i<40;i++){ html += `<span style="left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${(Math.random()*.6+.2).toFixed(2)}"></span>`; }
+  el.innerHTML = html;
+})();
+
+/* ================= NAV ================= */
+const homeEl = document.getElementById('home'), mapEl = document.getElementById('map'), levelEl = document.getElementById('level');
+function showHome(){ homeEl.style.display='flex'; mapEl.style.display='none'; levelEl.style.display='none'; renderHomeStats(); }
+function showMap(){ homeEl.style.display='none'; mapEl.style.display='block'; levelEl.style.display='none'; renderMap(); }
+function showLevel(num){ homeEl.style.display='none'; mapEl.style.display='none'; levelEl.style.display='flex'; startLevel(num); }
+
+function renderHomeStats(){
+  document.getElementById('home-stars').textContent = totalStars();
+  document.getElementById('home-xp').textContent = progress.xp;
+}
+document.getElementById('play-btn').onclick = showMap;
+document.getElementById('map-menu-btn').onclick = showHome;
+document.getElementById('exit-btn').onclick = showMap;
+document.getElementById('adaptive-btn').onclick = ()=>{
+  const done = Object.keys(progress.stars).map(Number);
+  if(done.length < 5){ alert('Play a few levels first to unlock adaptive practice.'); return; }
+  const weakTypes = Object.entries(progress.weak).sort((a,b)=>b[1]-a[1]);
+  let pool = LEVELS;
+  if(weakTypes.length){ const t = weakTypes[0][0]; pool = LEVELS.filter(l=>l.type===t && isUnlocked(l.num)); }
+  if(!pool.length) pool = LEVELS.filter(l=>isUnlocked(l.num));
+  const pick = pool[Math.floor(Math.random()*pool.length)];
+  showLevel(pick.num);
+};
+
+function renderMap(){
+  document.getElementById('map-stars').textContent = totalStars();
+  const wrap = document.getElementById('worlds'); wrap.innerHTML='';
+  WORLDS.forEach((w,wi)=>{
+    const block = document.createElement('div'); block.className='world-block';
+    block.innerHTML = `<div class="world-label">World ${wi+1}</div><div class="world-title">${w.title}</div><div class="level-grid"></div>`;
+    const grid = block.querySelector('.level-grid');
+    w.levels.forEach(lv=>{
+      const unlocked = isUnlocked(lv.num);
+      const stars = progress.stars[lv.num];
+      const card = document.createElement('div');
+      card.className = 'lvl-card' + (unlocked?'':' locked') + (stars?' done':'');
+      card.innerHTML = `
+        ${unlocked?'':'<span class="lock-icon">🔒</span>'}
+        <div class="lvl-num">Level ${lv.num}</div>
+        <div class="lvl-name">${lv.title}</div>
+        <div class="lvl-stars">${starString(stars||0)}</div>
+        <div class="lvl-type">${lv.type}</div>`;
+      if(unlocked) card.onclick = ()=>showLevel(lv.num);
+      grid.appendChild(card);
+    });
+    wrap.appendChild(block);
+  });
+}
+function starString(n){ let s=''; for(let i=0;i<5;i++) s += i<n?'★':'☆'; return s; }
+
+/* ================= LEVEL ENGINE ================= */
+let cur = null; // current level runtime state
+let levelToken = 0;
+const stageEl = document.getElementById('stage');
+
+function startLevel(num){
+  const lv = LEVELS.find(l=>l.num===num);
+  const token = ++levelToken;
+  cur = { lv, mistakes:0, hints:0, stage:1, token };
+  document.getElementById('crumb-world').textContent = `World ${lv.world+1} · ${WORLDS[lv.world].title.toUpperCase()}`;
+  document.getElementById('crumb-title').textContent = lv.title;
+  document.getElementById('mistake-count').textContent = 0;
+  document.getElementById('hint-count').textContent = 0;
+  document.getElementById('hint-box').style.display='none';
+  renderStage();
+}
+document.getElementById('hint-btn').onclick = ()=>{
+  if(cur.hints>=3) return;
+  cur.hints++; document.getElementById('hint-count').textContent = cur.hints;
+  const box = document.getElementById('hint-box');
+  box.style.display='block';
+  box.textContent = hintFor(cur.lv, cur.hints);
+};
+function hintFor(lv, tier){
+  const generic = {
+    valence: ['Valence electrons are the ones in the outermost shell.','Main-group elements: the group number gives a strong clue.',`${ELEMENTS[lv.el].name}'s valence electron count is ${ELEMENTS[lv.el].valence}.`],
+    classify: ['Metals are shiny, malleable, and lose electrons easily.','Non-metals sit on the right side of the periodic table.',`${ELEMENTS[lv.el].name} is a ${ELEMENTS[lv.el].metal?'metal':'non-metal'}.`],
+    ionic: ['Metals lose electrons; non-metals gain them.','The total charge of the compound must equal zero.','Use crisscross: cation count = |anion charge|, anion count = |cation charge| (then simplify).'],
+    covalent: ['Atoms share electron pairs to complete their outer shell.','Hydrogen only needs 2 electrons total (1 shared pair).','Count each line\'s bond order — double and triple bonds need more shared pairs.'],
+    polyionic: ['Treat the polyatomic ion as one unglued unit.','Balance total charge to zero, same as simple ionic compounds.','Use parentheses around a polyatomic ion if you need more than one of it.'],
+  };
+  return generic[lv.type][Math.min(tier-1,2)];
+}
+function mistake(){
+  cur.mistakes++; document.getElementById('mistake-count').textContent = cur.mistakes;
+  progress.weak[cur.lv.type] = (progress.weak[cur.lv.type]||0)+1; saveProgress();
+}
+function completeLevel(){
+  const stars = Math.max(1, 5-cur.mistakes);
+  const first = progress.stars[cur.lv.num]===undefined;
+  if(first || progress.stars[cur.lv.num] < stars) progress.stars[cur.lv.num] = stars;
+  if(first) progress.xp += 200;
+  saveProgress();
+  return stars;
+}
+
+function renderStage(){
+  stageEl.innerHTML='';
+  const lv = cur.lv;
+  if(lv.type==='valence') renderValence(lv);
+  else if(lv.type==='classify') renderClassify(lv);
+  else if(lv.type==='ionic') renderIonic(lv);
+  else if(lv.type==='covalent') renderCovalent(lv);
+  else if(lv.type==='polyionic') renderPolyionic(lv);
+}
+
+function atomBadgeHTML(el, size){
+  size = size||120;
+  const c = ELEMENTS[el].color;
+  let dots='';
+  for(let i=0;i<8;i++){
+    const a = (i/8)*2*Math.PI - Math.PI/2;
+    const r = size/2 + 8;
+    const x = size/2 + r*Math.cos(a), y = size/2 + r*Math.sin(a);
+    dots += `<span class="atom-dot" style="left:${x}px;top:${y}px;transform:translate(-50%,-50%)"></span>`;
+  }
+  return `<div style="position:relative;width:${size}px;height:${size}px;margin:0 auto;">
+    <div class="atom-badge" style="width:${size}px;height:${size}px;background:${c};color:#0b0a1f;">${el}</div>${dots}</div>`;
+}
+
+/* ---- VALENCE ---- */
+function renderValence(lv){
+  const el = lv.el;
+  stageEl.innerHTML = `
+    ${atomBadgeHTML(el)}
+    <div class="atom-label">${ELEMENTS[el].name}</div>
+    <div class="prompt" style="margin-top:26px;">How many <b>valence electrons</b> does ${ELEMENTS[el].name} have?</div>
+    <div class="choice-grid" id="choices"></div>`;
+  const grid = document.getElementById('choices');
+  for(let n=1;n<=8;n++){
+    const b = document.createElement('button'); b.className='choice-btn'; b.textContent=n;
+    b.onclick = ()=>{
+      if(n===ELEMENTS[el].valence){ b.classList.add('correct'); setTimeout(()=>finishAndNext(`${ELEMENTS[el].valence} valence e⁻`,`${ELEMENTS[el].name} has ${ELEMENTS[el].valence} valence electron${ELEMENTS[el].valence>1?'s':''}.`),350); }
+      else { b.classList.add('wrong'); mistake(); setTimeout(()=>b.classList.remove('wrong'),450); }
+    };
+    grid.appendChild(b);
+  }
+}
+
+/* ---- CLASSIFY ---- */
+function renderClassify(lv){
+  const el = lv.el;
+  stageEl.innerHTML = `
+    ${atomBadgeHTML(el)}
+    <div class="atom-label">${ELEMENTS[el].name}</div>
+    <div class="prompt" style="margin-top:26px;">Is ${ELEMENTS[el].name} a metal or non-metal?</div>
+    <div class="mc-row" id="choices"></div>`;
+  const row = document.getElementById('choices');
+  ['Metal','Non-Metal'].forEach(label=>{
+    const isMetalChoice = label==='Metal';
+    const b = document.createElement('button'); b.className='mc-btn'; b.textContent=label;
+    b.onclick = ()=>{
+      if(isMetalChoice===ELEMENTS[el].metal){ b.classList.add('correct'); setTimeout(()=>finishAndNext(ELEMENTS[el].metal?'Metal':'Non-Metal',`${ELEMENTS[el].name} is a ${ELEMENTS[el].metal?'metal':'non-metal'}.`),350); }
+      else { b.classList.add('wrong'); mistake(); setTimeout(()=>b.classList.remove('wrong'),450); }
+    };
+    row.appendChild(b);
+  });
+}
+
+/* ---- IONIC (2 stage) ---- */
+function renderIonic(lv){
+  const metal=lv.metal, nonmetal=lv.nonmetal;
+  const mc = metalCharge(metal), nc = Math.abs(nonmetalCharge(nonmetal));
+  let lost=0, gained=0;
+  stageEl.innerHTML = `
+    <div class="prompt">Transfer electrons from <b>${ELEMENTS[metal].name}</b> to <em>${ELEMENTS[nonmetal].name}</em> until both are stable.</div>
+    <div class="field">
+      <div class="fnode">${atomBadgeHTML(metal,100)}<div class="name">${ELEMENTS[metal].name}<span class="charge" id="mcharge"></span></div></div>
+      <div class="bolt">⚡</div>
+      <div class="fnode">${atomBadgeHTML(nonmetal,100)}<div class="name">${ELEMENTS[nonmetal].name}<span class="charge" id="ncharge"></span></div></div>
+    </div>
+    <div class="stage-actions">
+      <button class="btn btn-primary" id="transfer-btn">Transfer 1 electron</button>
+      <button class="btn btn-ghost" id="build-btn" disabled>Build compound →</button>
+    </div>
+    <div class="stage-note" id="ionic-note">${ELEMENTS[metal].symbol||metal} needs to lose <b>${mc}</b> · ${nonmetal} needs to gain <b>${nc}</b></div>`;
+  const note = document.getElementById('ionic-note');
+  const tbtn = document.getElementById('transfer-btn'), bbtn = document.getElementById('build-btn');
+  tbtn.onclick = ()=>{
+    if(lost<mc) lost++; if(gained<nc) gained++;
+    note.innerHTML = `${metal} needs to lose <b>${Math.max(0,mc-lost)}</b> · ${nonmetal} needs to gain <b>${Math.max(0,nc-gained)}</b>`;
+    if(lost>=mc && gained>=nc){ tbtn.disabled=true; tbtn.style.opacity=.4; bbtn.disabled=false; bbtn.style.opacity=1;
+      document.getElementById('mcharge').textContent = ` (+${mc})`;
+      document.getElementById('ncharge').textContent = ` (−${nc})`;
+    }
+  };
+  bbtn.onclick = ()=> renderIonicStage2(lv, mc, nc);
+}
+function renderIonicStage2(lv, mc, nc){
+  const metal=lv.metal, nonmetal=lv.nonmetal;
+  const g = gcd(mc,nc);
+  const targetM = nc/g, targetN = mc/g;
+  let cM=1, cN=1;
+  stageEl.innerHTML = `
+    <div class="prompt">Balance the charges. How many of each ion do you need?</div>
+    <div class="counter-row">
+      <div class="counter"><div class="ion" style="color:${ELEMENTS[metal].color}">${metal}<sup>${mc}+</sup></div>
+        <div class="ctr-controls"><button class="round-btn" id="m-minus">−</button><span class="val" id="m-val">1</span><button class="round-btn" id="m-plus">+</button></div></div>
+      <div class="counter"><div class="ion" style="color:${ELEMENTS[nonmetal].color}">${nonmetal}<sup>${nc}−</sup></div>
+        <div class="ctr-controls"><button class="round-btn" id="n-minus">−</button><span class="val" id="n-val">1</span><button class="round-btn" id="n-plus">+</button></div></div>
+    </div>
+    <div class="stage-note" id="charge-note">Total charge: <b id="tot">${mc-nc}</b> (must be 0)</div>
+    <div class="stage-actions"><button class="btn btn-primary" id="form-btn">Form Compound</button></div>`;
+  function upd(){
+    document.getElementById('m-val').textContent=cM; document.getElementById('n-val').textContent=cN;
+    const tot = cM*mc - cN*nc;
+    document.getElementById('tot').textContent = tot;
+  }
+  document.getElementById('m-minus').onclick=()=>{ if(cM>1) cM--; upd(); };
+  document.getElementById('m-plus').onclick=()=>{ if(cM<9) cM++; upd(); };
+  document.getElementById('n-minus').onclick=()=>{ if(cN>1) cN--; upd(); };
+  document.getElementById('n-plus').onclick=()=>{ if(cN<9) cN++; upd(); };
+  document.getElementById('form-btn').onclick=()=>{
+    if(cM*mc - cN*nc === 0){
+      const formula = fmtUnit(metal)+sub(cM) + fmtUnit(nonmetal)+sub(cN);
+      const name = ionicName(metal,nonmetal).title;
+      finishAndNext(formula, `${ELEMENTS[metal].name} loses electrons to ${ELEMENTS[nonmetal].name}; ${cM} ${metal} + ${cN} ${nonmetal} balance to a neutral charge.`, name);
+    } else { mistake(); const c = document.getElementById('charge-note'); c.style.color='var(--red)'; setTimeout(()=>c.style.color='',450); }
+  };
+}
+
+/* ---- COVALENT ---- */
+function molGraph(lv){
+  if(lv.graph) return lv.graph;
+  const atoms=[{id:'c',el:lv.center,x:50,y:50}];
+  const n = lv.arms.length;
+  lv.arms.forEach((arm,i)=>{
+    let angle;
+    if(n===1) angle = 0;
+    else if(n===2) angle = i===0?180:0;
+    else angle = -90 + i*(360/n);
+    const rad = angle*Math.PI/180;
+    const R = 34;
+    atoms.push({id:'a'+i, el:arm.el, x:50+R*Math.cos(rad), y:50+R*Math.sin(rad)});
+  });
+  const bonds = lv.arms.map((arm,i)=>({a:'c', b:'a'+i, order:arm.order}));
+  return {atoms, bonds};
+}
+function renderCovalent(lv){
+  const g = molGraph(lv);
+  const totalPairs = g.bonds.reduce((s,b)=>s+b.order,0);
+  let shared = 0;
+  const W=340,H=280;
+  let svg = `<svg class="bond-svg" width="${W}" height="${H}" viewBox="0 0 100 100" preserveAspectRatio="none">`;
+  g.bonds.forEach((b,bi)=>{
+    const A = g.atoms.find(x=>x.id===b.a), B = g.atoms.find(x=>x.id===b.b);
+    for(let k=0;k<b.order;k++){
+      const off = (k-(b.order-1)/2)*5.5;
+      const dx=B.y-A.y, dy=A.x-B.x; const len=Math.hypot(dx,dy)||1;
+      const ox=dx/len*off, oy=dy/len*off;
+      svg += `<line class="bond-line" data-bond="${bi}" data-slot="${k}" x1="${A.x+ox}" y1="${A.y+oy}" x2="${B.x+ox}" y2="${B.y+oy}"/>`;
+    }
+  });
+  svg += `</svg>`;
+  let atomsHtml='';
+  g.atoms.forEach(a=>{
+    const c = ELEMENTS[a.el].color;
+    atomsHtml += `<div class="m-atom" style="left:${a.x/100*W}px;top:${a.y/100*H}px;background:${c};">${a.el}</div>`;
+    atomsHtml += `<div class="m-label" style="left:${a.x/100*W}px;top:${a.y/100*H+40}px;">${ELEMENTS[a.el].name}</div>`;
+  });
+  stageEl.innerHTML = `
+    <div class="prompt">Share electron pairs so every atom completes its outer shell.</div>
+    <div class="molecule-field" style="width:${W}px;height:${H}px;">${svg}${atomsHtml}</div>
+    <div class="stage-note" id="pair-note">Pairs shared: <b id="pv">0</b> / ${totalPairs}</div>
+    <div class="stage-actions">
+      <button class="btn btn-primary" id="share-btn">Share a pair</button>
+      <button class="btn btn-ghost" id="undo-btn">Undo</button>
+      <button class="btn btn-primary" id="form-mol-btn" style="background:linear-gradient(135deg,var(--green),#22d3ee)">Form Molecule</button>
+    </div>`;
+  function refreshLines(){
+    let filled = shared;
+    document.querySelectorAll('.bond-line').forEach(line=>{
+      const bi = +line.dataset.bond, k = +line.dataset.slot;
+      let priorPairs = 0;
+      for(let i=0;i<bi;i++) priorPairs += g.bonds[i].order;
+      const idxInAll = priorPairs + k;
+      line.classList.toggle('lit', idxInAll < shared);
+    });
+  }
+  document.getElementById('share-btn').onclick=()=>{
+    if(shared<totalPairs){ shared++; document.getElementById('pv').textContent=shared; refreshLines(); }
+    if(shared>=totalPairs){ const sb=document.getElementById('share-btn'); sb.disabled=true; sb.style.opacity=.4; }
+  };
+  document.getElementById('undo-btn').onclick=()=>{
+    if(shared>0){ shared--; document.getElementById('pv').textContent=shared; refreshLines();
+      const sb=document.getElementById('share-btn'); sb.disabled=false; sb.style.opacity=1; }
+  };
+  document.getElementById('form-mol-btn').onclick=()=>{
+    if(shared===totalPairs){
+      const formula = molFormula(lv);
+      finishAndNext(formula, `${lv.name}: atoms share ${totalPairs} electron pair${totalPairs>1?'s':''} to complete their outer shells.`, lv.name);
+    } else { mistake(); const n=document.getElementById('pair-note'); n.style.color='var(--red)'; setTimeout(()=>n.style.color='',450); }
+  };
+}
+function molFormula(lv){
+  if(lv.formulaOverride) return lv.formulaOverride;
+  const g = molGraph(lv);
+  const counts={};
+  g.atoms.forEach(a=>counts[a.el]=(counts[a.el]||0)+1);
+  const order=['C','N','P','H','S','Cl','Br','O','F'];
+  let s='';
+  order.filter(e=>counts[e]).forEach(e=>{ s+= e+sub(counts[e]); });
+  Object.keys(counts).filter(e=>!order.includes(e)).forEach(e=>{ s+= e+sub(counts[e]); });
+  return s;
+}
+
+/* ---- POLYIONIC ---- */
+function renderPolyionic(lv){
+  const cation=lv.cation, anion=lv.anion;
+  const cIsIon = !!IONS[cation], aIsIon = !!IONS[anion];
+  const cCharge = cIsIon? IONS[cation].charge : metalCharge(cation);
+  const aCharge = aIsIon? IONS[anion].charge : nonmetalCharge(anion);
+  let cCount=1, aCount=1;
+  const cLabel = cIsIon? cation.replace(/(\d+)/,'<sub>$1</sub>') : cation;
+  const aLabel = aIsIon? anion.replace(/(\d+)/,'<sub>$1</sub>') : anion;
+  const cName = cIsIon? IONS[cation].name : ELEMENTS[cation].name;
+  const aName = aIsIon? IONS[anion].name : (({O:'Oxide',F:'Fluoride',Cl:'Chloride',Br:'Bromide'})[anion]||anion);
+  const article = w => /^[aeiou]/i.test(w) ? 'an' : 'a';
+  stageEl.innerHTML = `
+    <div class="prompt">Balance ${article(cName)} <b>${cName}</b> ion with ${article(aName)} <em>${aName}</em> ion. Polyatomic ions travel as one unit.</div>
+    <div class="field">
+      <div class="ion-card" style="background:${cIsIon?'#f5a95f22':'#f5a95f22'};color:#f5a95f;border:1px solid #f5a95f55;">${cLabel}<sup>${Math.abs(cCharge)}${cCharge>0?'+':'−'}</sup><span class="sub">${cName}</span></div>
+      <div class="ion-card" style="background:#34d39922;color:#34d399;border:1px solid #34d39955;">${aLabel}<sup>${Math.abs(aCharge)}${aCharge>0?'+':'−'}</sup><span class="sub">${aName}</span></div>
+    </div>
+    <div class="counter-row">
+      <div class="counter"><div class="ion" style="color:#f5a95f;">${cLabel}<sup>${Math.abs(cCharge)}${cCharge>0?'+':'−'}</sup></div>
+        <div class="ctr-controls"><button class="round-btn" id="c-minus">−</button><span class="val" id="c-val">1</span><button class="round-btn" id="c-plus">+</button></div></div>
+      <div class="counter"><div class="ion" style="color:#34d399;">${aLabel}<sup>${Math.abs(aCharge)}${aCharge>0?'+':'−'}</sup></div>
+        <div class="ctr-controls"><button class="round-btn" id="a-minus">−</button><span class="val" id="a-val">1</span><button class="round-btn" id="a-plus">+</button></div></div>
+    </div>
+    <div class="stage-note" id="pnote">Total charge: <b id="ptot">${cCharge-aCharge}</b> (must be 0)</div>
+    <div class="stage-actions"><button class="btn btn-primary" id="pform-btn">Form Compound</button></div>`;
+  function upd(){
+    document.getElementById('c-val').textContent=cCount; document.getElementById('a-val').textContent=aCount;
+    document.getElementById('ptot').textContent = cCount*cCharge + aCount*aCharge;
+  }
+  document.getElementById('c-minus').onclick=()=>{ if(cCount>1) cCount--; upd(); };
+  document.getElementById('c-plus').onclick=()=>{ if(cCount<9) cCount++; upd(); };
+  document.getElementById('a-minus').onclick=()=>{ if(aCount>1) aCount--; upd(); };
+  document.getElementById('a-plus').onclick=()=>{ if(aCount<9) aCount++; upd(); };
+  document.getElementById('pform-btn').onclick=()=>{
+    if(cCount*cCharge + aCount*aCharge === 0){
+      let s1 = fmtUnit(cation); if(cIsIon && cCount>1) s1='('+s1+')'+sub(cCount); else if(cCount>1) s1+=sub(cCount);
+      let s2 = fmtUnit(anion); if(aIsIon && aCount>1) s2='('+s2+')'+sub(aCount); else if(aCount>1) s2+=sub(aCount);
+      finishAndNext(s1+s2, `${cName} and ${aName} balance charges: ${cCount} ${cation} + ${aCount} ${anion}.`, lv.title);
+    } else { mistake(); const n=document.getElementById('pnote'); n.style.color='var(--red)'; setTimeout(()=>n.style.color='',450); }
+  };
+}
+function fmtUnit(sym){ return sym.replace(/(\d+)/,'<sub>$1</sub>'); }
+function sub(n){ return n>1 ? `<sub>${n}</sub>` : ''; }
+
+/* ---- SUCCESS + ADVANCE ---- */
+function finishAndNext(formula, explain, nameOverride){
+  const stars = completeLevel();
+  const myToken = cur.token;
+  const card = document.createElement('div');
+  card.className='success-card';
+  card.innerHTML = `
+    <div class="success-emoji">✨</div>
+    <div class="success-title">${nameOverride?nameOverride+' formed!':'Correct!'}</div>
+    <div class="success-formula">${formula}</div>
+    <div class="success-stars">${starString(stars)}</div>
+    <div class="success-explain">${explain}</div>`;
+  stageEl.appendChild(card);
+  setTimeout(()=>{
+    if(!cur || cur.token !== myToken || levelEl.style.display==='none') return; // user navigated away — don't hijack their state
+    const nextNum = cur.lv.num+1;
+    if(nextNum<=LEVELS.length){ startLevel(nextNum); }
+    else { showMap(); }
+  }, 1600);
+}
+
+/* ================= INIT ================= */
+showHome();
+</script>
+</body>
+</html>

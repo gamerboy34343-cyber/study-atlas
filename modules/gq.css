@@ -1,0 +1,78 @@
+
+.gq-scope {
+  --bg1:#241a4a; --bg2:#0b0818;
+  --primary:#7C5CFF; --accent:#22D3EE; --gold:#FDE68A;
+  --success:#7CE495; --destructive:#F26D6D;
+  --text:#f3f1fb; --muted:#a99fd6;
+  --gradient-aurora: linear-gradient(90deg, var(--primary), var(--accent));
+}
+.gq-scope * {box-sizing:border-box;}
+.gq-scope, .gq-scope {margin:0;padding:0;min-height:100%;}
+.gq-scope {
+  min-height:100dvh;
+  background:radial-gradient(circle at 20% 0%, var(--bg1), var(--bg2) 70%);
+  color:var(--text); font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+.gq-scope .font-display, .gq-scope h1, .gq-scope h2, .gq-scope h3 {font-family:'Baloo 2',sans-serif;}
+.gq-scope button {font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+.gq-scope a {color:inherit;text-decoration:none;}
+.gq-scope .glass {background:#ffffff0f;backdrop-filter:blur(10px);border:1px solid #ffffff14;}
+.gq-scope .glass-strong {background:#ffffff14;backdrop-filter:blur(14px);border:1px solid #ffffff1f;}
+.gq-scope .shadow-glow {box-shadow:0 0 40px -10px #7c5cff66;}
+.gq-scope .text-gradient-aurora {background:var(--gradient-aurora);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.gq-scope main {max-width:720px;margin:0 auto;padding:16px 16px 96px;}
+.gq-scope .topnav {position:sticky;top:0;z-index:5;height:8px;}
+.gq-scope .rounded-3xl {border-radius:24px;} .gq-scope .rounded-2xl {border-radius:16px;}
+.gq-scope .btn-primary {background:var(--primary);color:#0b0818;border-radius:16px;padding:16px;font-weight:800;font-size:15px;width:100%;box-shadow:0 0 30px -8px #7c5cff88;}
+.gq-scope .btn-primary:hover {filter:brightness(1.1);}
+.gq-scope .btn-primary:disabled {opacity:.4;box-shadow:none;}
+.gq-scope .btn-outline {border-radius:16px;padding:14px;text-align:center;width:100%;}
+.gq-scope .opt-grid {display:grid;gap:12px;grid-template-columns:1fr 1fr;}
+@media(max-width:480px){.gq-scope .opt-grid {grid-template-columns:1fr;}}
+.gq-scope .opt-btn {text-align:left;border-radius:16px;padding:16px;font-weight:600;border:2px solid transparent;background:#ffffff0f;transition:.15s;}
+.gq-scope .opt-btn:hover:not(:disabled) {border-color:#7c5cff99;}
+.gq-scope .opt-btn.right {background:#7ce49540;border-color:var(--success);}
+.gq-scope .opt-btn.wrong {background:#f26d6d40;border-color:var(--destructive);}
+.gq-scope .opt-btn.reveal {background:#7ce49525;border-color:#7ce49599;}
+.gq-scope .opt-btn.dim {opacity:.4;}
+.gq-scope .opt-btn:disabled {cursor:default;}
+.gq-scope .tap-grid {display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(min-width:480px){.gq-scope .tap-grid {grid-template-columns:repeat(3,1fr);}}
+.gq-scope .tap-btn {border-radius:16px;padding:16px 12px;font-weight:600;font-size:13.5px;text-align:center;border:2px solid transparent;background:#ffffff0f;}
+.gq-scope .tap-btn.on {background:#7c5cff40;border-color:var(--primary);box-shadow:0 0 20px -6px #7c5cff88;}
+.gq-scope .tap-btn.right {background:#7ce49540;border-color:var(--success);}
+.gq-scope .tap-btn.wrong {background:#f26d6d40;border-color:var(--destructive);}
+.gq-scope .tap-btn.dim {opacity:.4;}
+.gq-scope .pillbox {background:#ffffff0f;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;}
+.gq-scope .bucket-grid {display:grid;gap:12px;}
+.gq-scope .bucket {background:#ffffff0f;border-radius:16px;padding:12px;min-height:130px;}
+.gq-scope .bucket .lbl {font-size:13px;font-weight:800;opacity:.8;display:flex;gap:6px;align-items:center;margin-bottom:8px;}
+.gq-scope .chip {border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;background:#7c5cff40;}
+.gq-scope .chip.right {background:#7ce49540;border:1px solid #7ce49580;}
+.gq-scope .chip.wrong {background:#f26d6d40;border:1px solid #f26d6d80;}
+.gq-scope .order-item {display:flex;align-items:center;gap:10px;border-radius:16px;padding:10px 12px;border:2px solid transparent;background:#ffffff0f;margin-bottom:8px;}
+.gq-scope .order-item.right {background:#7ce49530;border-color:var(--success);}
+.gq-scope .order-item.wrong {background:#f26d6d30;border-color:var(--destructive);}
+.gq-scope .order-num {width:26px;height:26px;border-radius:50%;background:#7c5cff55;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.gq-scope .roundbtn {width:30px;height:30px;border-radius:50%;background:#ffffff14;font-size:13px;}
+.gq-scope .roundbtn:disabled {opacity:.35;}
+.gq-scope .progress-track {height:12px;border-radius:999px;background:#ffffff1a;overflow:hidden;}
+.gq-scope .progress-fill {height:100%;border-radius:999px;background:var(--gradient-aurora);transition:width .4s;}
+.gq-scope .hpbar {height:12px;border-radius:999px;background:#ffffff1a;overflow:hidden;margin-top:4px;}
+.gq-scope .hpbar .f {height:100%;border-radius:999px;transition:width .3s;}
+.gq-scope .explain {margin-top:20px;border-radius:16px;padding:16px;font-size:14px;}
+.gq-scope .explain.right {background:#7ce49530;border:1px solid #7ce49560;}
+.gq-scope .explain.wrong {background:#f26d6d30;border:1px solid #f26d6d60;}
+.gq-scope .stat-tile {background:#ffffff0f;border-radius:16px;padding:12px;text-align:center;}
+.gq-scope .avatar-pick {font-size:34px;aspect-ratio:1;border-radius:16px;border:2px solid transparent;background:#ffffff0f;display:flex;align-items:center;justify-content:center;}
+.gq-scope .avatar-pick.sel {background:#7c5cff4d;border-color:var(--primary);box-shadow:0 0 20px -4px #7c5cff;transform:scale(1.05);}
+.gq-scope input[type=text] {width:100%;border-radius:16px;background:#ffffff0f;border:1px solid #ffffff1f;color:var(--text);padding:14px;outline:none;font-size:15px;}
+.gq-scope input[type=text]:focus {box-shadow:0 0 0 2px var(--primary);}
+.gq-scope .world-card {position:relative;overflow:hidden;border-radius:24px;padding:20px;display:block;}
+.gq-scope .world-card .glow {position:absolute;right:-40px;top:-40px;width:220px;height:220px;border-radius:50%;filter:blur(40px);opacity:.7;}
+.gq-scope .locked {opacity:.55;pointer-events:none;}
+.gq-scope .lesson-row {display:flex;align-items:center;gap:16px;border-radius:24px;padding:16px;border:2px solid transparent;}
+.gq-scope .lesson-row:hover {border-color:#7c5cff99;box-shadow:0 0 30px -10px #7c5cff88;}
+.gq-scope .lesson-icon {width:56px;height:56px;border-radius:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',sans-serif;font-size:22px;}
+.gq-scope .confetti-wrap {position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50;}

@@ -1,0 +1,64 @@
+
+<template id="tpl-bb">
+<div class="bgdots" id="bgdots"></div>
+
+<div id="home">
+  <div class="home-inner">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 9V3"/></svg></div>
+    <h1 class="title">Bond Builder</h1>
+    <p class="sub">Master ionic, covalent, and polyatomic bonds through play.</p>
+    <div class="stats-row">
+      <span>⭐ <b id="home-stars">0</b></span>
+      <span>🏆 <b id="home-xp">0</b> XP</span>
+    </div>
+    <div class="cta-row">
+      <button class="btn btn-primary" id="play-btn">Play →</button>
+      <button class="btn btn-ghost" id="adaptive-btn">🧠 Adaptive Practice</button>
+    </div>
+    <div class="feature-grid">
+      <div class="feature"><b>18 Worlds</b><span>From atoms to polyatomics</span></div>
+      <div class="feature"><b>146 Levels</b><span>Ionic, covalent, polyatomic</span></div>
+      <div class="feature"><b>Progressive Hints</b><span>Tiered guidance, no spoilers</span></div>
+      <div class="feature"><b>Adaptive Practice</b><span>Reviews your weak spots</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="map">
+  <div class="topbar">
+    <button class="link-btn" id="map-menu-btn">← Menu</button>
+    <div class="map-title">Choose your challenge</div>
+    <div class="star-total">⭐ <span id="map-stars">0</span></div>
+  </div>
+  <div class="worlds" id="worlds"></div>
+</div>
+
+<div id="level">
+  <div class="lvl-topbar">
+    <button class="link-btn" id="exit-btn">← Exit</button>
+    <div class="lvl-crumb"><div class="eyebrow" id="crumb-world"></div><div class="name" id="crumb-title"></div></div>
+    <div class="lvl-meta"><span class="mistakes">✕ <span id="mistake-count">0</span></span><span class="hints-left">💡 <span id="hint-count">0</span>/3</span></div>
+  </div>
+  <div class="lvl-stage" id="stage"></div>
+  <button class="hint-btn" id="hint-btn">💡 Hint</button>
+  <div class="hint-box" id="hint-box"></div>
+</div>
+
+<a class="credit" href="#" onclick="return false">Bond Builder — Study Atlas</a>
+</template>
+
+<template id="tpl-cq">
+<div id="app"></div>
+</template>
+
+<template id="tpl-gq">
+<div id="app"></div>
+</template>
+
+<template id="tpl-tq">
+<div id="app"></div>
+</template>
+
+<template id="tpl-no">
+<div id="app"></div>
+</template>
