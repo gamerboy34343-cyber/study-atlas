@@ -2,7 +2,7 @@
    and reopens instantly, while leaving Supabase/API calls untouched (always
    go to the network; the app already handles being offline for those). */
 
-const CACHE_VERSION = 'study-atlas-v1';
+const CACHE_VERSION = 'study-atlas-v3';
 
 const PRECACHE_URLS = [
   './',
@@ -18,11 +18,19 @@ const PRECACHE_URLS = [
   'adaptive.js',
   'studybot.js',
   'modules/curriculum.js',
+  'modules/science_curriculum.js',
+  'modules/hindi_curriculum.js',
   'modules/bb.js',
   'modules/cq.js',
+  'modules/mr.js',
+  'modules/co.js',
   'modules/gq.js',
   'modules/tq.js',
   'modules/no.js',
+  'modules/sc.js',
+  'modules/hi.js',
+  'modules/cv.js',
+  'modules/tr.js',
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/apple-touch-icon.png',
@@ -50,9 +58,9 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(req.url);
   // Only handle same-origin app-shell files; everything else (Supabase,
-  // Netlify functions, Google Fonts, pdf.js CDN) goes straight to the network.
+  // the /api serverless functions, Google Fonts, pdf.js CDN) goes straight to the network.
   if (url.origin !== self.location.origin) return;
-  if (url.pathname.includes('/.netlify/functions/')) return;
+  if (url.pathname.startsWith('/api/')) return;
 
   event.respondWith(
     caches.match(req).then((cached) => {

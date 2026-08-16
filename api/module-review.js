@@ -1,7 +1,7 @@
-// Netlify serverless function: generates an AI review quiz covering everything
+// Vercel serverless function: generates an AI review quiz covering everything
 // taught in one module (world) of a subject, used as a required checkpoint
 // before the next module unlocks.
-// Configure ANTHROPIC_API_KEY in Netlify: Site settings -> Environment variables.
+// Configure ANTHROPIC_API_KEY in Vercel: Project Settings -> Environment Variables.
 
 const MODEL = 'claude-sonnet-5';
 
@@ -19,42 +19,27 @@ const SUBJECT_NAMES = {
   tr: 'Geography (Trade Quest — factors of production)',
 };
 
-exports.handler = async function (event) {
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  };
+module.exports = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers, body: '' };
-  }
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
+  if (req.method === 'OPTIONS') { res.status(204).end(); return; }
+  if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'ANTHROPIC_API_KEY is not configured on this site. Add it in Netlify: Site settings → Environment variables.' }),
-    };
+    res.status(500).json({ error: 'ANTHROPIC_API_KEY is not configured on this project. Add it in Vercel: Project Settings → Environment Variables.' });
+    return;
   }
 
-  let payload;
-  try {
-    payload = JSON.parse(event.body || '{}');
-  } catch (e) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON body' }) };
-  }
-
+  const payload = req.body || {};
   const subject = payload.subject;
   const moduleTitle = typeof payload.moduleTitle === 'string' ? payload.moduleTitle.slice(0, 200) : '';
   const lessonTitles = Array.isArray(payload.lessonTitles) ? payload.lessonTitles.slice(0, 20) : [];
   if (!SUBJECT_NAMES[subject] || !moduleTitle || lessonTitles.length === 0) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing subject, moduleTitle, or lessonTitles' }) };
+    res.status(400).json({ error: 'Missing subject, moduleTitle, or lessonTitles' });
+    return;
   }
 
   const systemPrompt = [
@@ -88,7 +73,8 @@ exports.handler = async function (event) {
     const data = await resp.json();
     if (!resp.ok) {
       const msg = (data && data.error && data.error.message) || `Anthropic API error (${resp.status})`;
-      return { statusCode: resp.status, headers, body: JSON.stringify({ error: msg }) };
+      res.status(resp.status).json({ error: msg });
+      return;
     }
     const raw = (data.content || []).map((b) => (b.type === 'text' ? b.text : '')).join('').trim();
     const cleaned = raw.replace(/^```(json)?/i, '').replace(/```$/, '').trim();
@@ -97,14 +83,16 @@ exports.handler = async function (event) {
     try {
       questions = JSON.parse(cleaned);
     } catch (e) {
-      return { statusCode: 502, headers, body: JSON.stringify({ error: 'The AI returned an unexpected format. Try again.' }) };
+      res.status(502).json({ error: 'The AI returned an unexpected format. Try again.' });
+      return;
     }
     if (!Array.isArray(questions) || questions.length === 0) {
-      return { statusCode: 502, headers, body: JSON.stringify({ error: 'The AI did not return any questions. Try again.' }) };
+      res.status(502).json({ error: 'The AI did not return any questions. Try again.' });
+      return;
     }
 
-    return { statusCode: 200, headers, body: JSON.stringify({ questions }) };
+    res.status(200).json({ questions });
   } catch (err) {
-    return { statusCode: 502, headers, body: JSON.stringify({ error: 'Could not reach the AI provider: ' + err.message }) };
+    res.status(502).json({ error: 'Could not reach the AI provider: ' + err.message });
   }
 };

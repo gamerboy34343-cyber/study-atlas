@@ -54,7 +54,7 @@ function atlasShowModuleReviewGate(container, opts){
   async function startQuiz(){
     container.innerHTML = `<div class="review-gate"><div style="padding:40px 0;text-align:center;color:var(--shell-muted)">Generating your review…</div></div>`;
     try{
-      const res = await fetch('/.netlify/functions/module-review', {
+      const res = await fetch('/api/module-review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subject, moduleTitle, lessonTitles }),
@@ -70,7 +70,7 @@ function atlasShowModuleReviewGate(container, opts){
     }catch(err){
       let msg = err.message || String(err);
       if(location.protocol === 'file:'){
-        msg = 'Module Review needs the site deployed to Netlify with ANTHROPIC_API_KEY configured — it can\'t reach that from a local file.';
+        msg = 'Module Review needs the site deployed (with ANTHROPIC_API_KEY configured) — it can\'t reach that from a local file.';
       }
       renderIntro(msg);
     }

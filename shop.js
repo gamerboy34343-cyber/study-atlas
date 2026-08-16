@@ -26,9 +26,15 @@ const SHOP_BOOSTS = [
 const GAME_SKINS = {
   bb: { item:'skin_bb', name:'Emerald Lab',     emoji:'🧪', price:150, vars:{'--purple':'#34d399','--cyan':'#22d3ee'} },
   cq: { item:'skin_cq', name:'Imperial Crimson', emoji:'🏰', price:150, vars:{'--primary':'#e0555f','--accent':'#fbbf24'} },
+  mr: { item:'skin_mr', name:'Saffron Swarajya', emoji:'🚩', price:150, vars:{'--primary':'#e0555f','--accent':'#fb923c'} },
+  co: { item:'skin_co', name:'East India Navy', emoji:'⛵', price:150, vars:{'--primary':'#4a7fb5','--accent':'#fbbf24'} },
   gq: { item:'skin_gq', name:'Autumn Grove',     emoji:'🌱', price:150, vars:{'--primary':'#e08a3d','--accent':'#fbbf24'} },
   tq: { item:'skin_tq', name:'Rose Quartz',      emoji:'📖', price:150, vars:{'--primary':'#ec6f9c'} },
   no: { item:'skin_no', name:'Emerald Odyssey',  emoji:'🔢', price:150, vars:{'--primary':'#34d399'} },
+  sc: { item:'skin_sc', name:'Ozone Investigator', emoji:'🔬', price:150, vars:{'--primary':'#0ea5e9','--gold':'#22c55e'} },
+  hi: { item:'skin_hi', name:'Kesariya Kalam', emoji:'📖', price:150, vars:{'--primary':'#d97706','--gold':'#f59e0b'} },
+  cv: { item:'skin_cv', name:'Republic Gold',    emoji:'🗳️', price:150, vars:{'--primary':'#fbbf24','--accent':'#3b82f6'} },
+  tr: { item:'skin_tr', name:'Merchant Emerald', emoji:'💰', price:150, vars:{'--primary':'#22c55e','--accent':'#fbbf24'} },
 };
 
 let atlasInventory = {}; // { item_id: quantity }

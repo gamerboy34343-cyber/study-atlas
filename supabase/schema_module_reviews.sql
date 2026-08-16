@@ -4,7 +4,7 @@
 
 create table if not exists public.module_reviews (
   user_id uuid not null references auth.users(id) on delete cascade,
-  subject text not null check (subject in ('bb','cq','gq','tq','no')),
+  subject text not null check (subject in ('bb','cq','mr','co','gq','tq','no','sc','hi','cv','tr')),
   module_id text not null,
   passed boolean not null default false,
   best_score integer not null default 0,

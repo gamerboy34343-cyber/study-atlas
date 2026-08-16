@@ -79,7 +79,7 @@ async function atlasGenerateAdaptiveQuiz(){
 
   try{
     const mistakes = await atlasFetchMistakes(50);
-    const res = await fetch('/.netlify/functions/adaptive-practice', {
+    const res = await fetch('/api/adaptive-practice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mistakes: mistakes.map(m => ({ subject: m.subject, topic: m.topic })) }),
@@ -97,7 +97,7 @@ async function atlasGenerateAdaptiveQuiz(){
   }catch(err){
     let msg = err.message || String(err);
     if(location.protocol === 'file:'){
-      msg = 'The adaptive practice AI needs the site deployed to Netlify with ANTHROPIC_API_KEY configured — it can\'t reach that from a local file.';
+      msg = 'The adaptive practice AI needs the site deployed (with ANTHROPIC_API_KEY configured) — it can\'t reach that from a local file.';
     }
     area.innerHTML = `<div style="text-align:center;color:#fda4af;padding:20px 0">⚠️ ${apEscape(msg)}</div>`;
   }finally{

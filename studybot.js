@@ -229,7 +229,7 @@ async function sbAsk(){
 
   try{
     const context = sbSelectContext(chat.pdfText, question, 12000);
-    const res = await fetch('/.netlify/functions/ask', {
+    const res = await fetch('/api/ask', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ question, context, docName: chat.pdfName, history: chat.messages.slice(-6) })
@@ -243,7 +243,7 @@ async function sbAsk(){
   }catch(err){
     let msg = err.message || String(err);
     if(location.protocol === 'file:'){
-      msg = "Study Bot's AI needs the site deployed to Netlify with the /netlify/functions/ask function and ANTHROPIC_API_KEY configured — it can't reach that from a local file. Try it after deploying.";
+      msg = "Study Bot's AI needs the site deployed (with the /api/ask function and ANTHROPIC_API_KEY configured) — it can't reach that from a local file. Try it after deploying.";
     }
     chat.messages.push({role:'error', content: '⚠️ ' + msg});
   }

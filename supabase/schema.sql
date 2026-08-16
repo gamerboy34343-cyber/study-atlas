@@ -64,7 +64,7 @@ create trigger on_auth_user_created
 create table if not exists public.lesson_progress (
   id bigint generated always as identity primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
-  subject text not null check (subject in ('bb','cq','gq','tq','no')),
+  subject text not null check (subject in ('bb','cq','mr','co','gq','tq','no','sc','hi','cv','tr')),
   lesson_id text not null,
   completed_at timestamptz not null default now(),
   unique (user_id, subject, lesson_id)

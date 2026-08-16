@@ -1,21 +1,21 @@
-function noInit(){
+function scInit(){
 
-const CU = window.CURRICULUM;
+const CU = window.SCIENCE_CURRICULUM;
 const ACHIEVEMENTS = [
   {id:'first-steps', title:'First Steps', icon:'👣', desc:'Complete your first lesson.'},
   {id:'perfect-lesson', title:'Perfect Lesson', icon:'💯', desc:'Get every question right in a lesson.'},
   {id:'perfect-world', title:'Perfect World', icon:'🌟', desc:'Complete every lesson in a world.'},
   {id:'boss-slayer', title:'Boss Slayer', icon:'⚔️', desc:'Defeat a boss battle.'},
   {id:'speed-master', title:'Speed Master', icon:'⚡', desc:'Reach a combo of 5 correct in a row.'},
-  {id:'math-genius', title:'Math Genius', icon:'🧠', desc:'Earn 1000 XP.'},
+  {id:'science-genius', title:'Science Genius', icon:'🧠', desc:'Earn 1000 XP.'},
   {id:'explorer-badge', title:'Explorer', icon:'🗺️', desc:'Visit lessons across 5 worlds.'},
-  {id:'guardian', title:'Guardian of Numbers', icon:'🪷', desc:'Defeat the Number Thief.'},
+  {id:'planet-guardian', title:'Guardian of Earth', icon:'🌍', desc:'Defeat the Planetary Guardian.'},
 ];
-const AVATARS = [{id:'explorer',emoji:'🧭'},{id:'scribe',emoji:'🧑‍🎓'},{id:'sage',emoji:'🧙'},{id:'astro',emoji:'🧑‍🚀'}];
-const PETS = [{id:'owl',emoji:'🦉'},{id:'fox',emoji:'🦊'},{id:'cat',emoji:'🐱'},{id:'dragon',emoji:'🐉'}];
+const AVATARS = [{id:'explorer',emoji:'🔬'},{id:'scribe',emoji:'🧪'},{id:'sage',emoji:'🧑‍🔬'},{id:'astro',emoji:'🛰️'}];
+const PETS = [{id:'owl',emoji:'🦉'},{id:'fox',emoji:'🐸'},{id:'cat',emoji:'🐛'},{id:'dragon',emoji:'🦎'}];
 
 /* ============================== STATE ============================== */
-const STORE_KEY = 'math-odyssey-save-v1';
+const STORE_KEY = 'curiosity-quest-save-v1';
 function defaultState(){ return {xp:0,coins:60,diamonds:0,scrolls:0,keys:0,hearts:5,streak:1,lastPlayed:null,completed:{},badges:[],ownedAvatars:['explorer'],ownedPets:['owl'],ownedCostumes:[],avatar:'explorer',pet:'owl',costume:null,weakTopics:[],wheelClaimed:null,bestCombo:0}; }
 function loadState(){
   try{
@@ -46,28 +46,28 @@ function update(patch){
   }
 }
 const key = (w,l)=>`${w}:${l}`;
-function worldPrevDoneNo(idx){
+function worldPrevDoneSc(idx){
   if(idx<=0) return true;
   const prev = CU[idx-1];
   return !prev || prev.lessons.every(l=>!!STATE.completed[key(prev.id,l.id)]);
 }
-function worldReviewPassedNo(idx){
+function worldReviewPassedSc(idx){
   if(idx<=0) return true;
-  return typeof atlasModulePassed !== 'function' || atlasModulePassed('no', String(CU[idx-1].id));
+  return typeof atlasModulePassed !== 'function' || atlasModulePassed('sc', String(CU[idx-1].id));
 }
 function isWorldUnlocked(worldId){
   const idx = CU.findIndex(w=>w.id===worldId);
-  return worldPrevDoneNo(idx) && worldReviewPassedNo(idx);
+  return worldPrevDoneSc(idx) && worldReviewPassedSc(idx);
 }
-function worldNeedsReviewNo(worldId){
+function worldNeedsReviewSc(worldId){
   const idx = CU.findIndex(w=>w.id===worldId);
-  return idx>0 && worldPrevDoneNo(idx) && !worldReviewPassedNo(idx);
+  return idx>0 && worldPrevDoneSc(idx) && !worldReviewPassedSc(idx);
 }
-window.__openWorldReviewNo = (worldId)=>{
+window.__openWorldReviewSc = (worldId)=>{
   const idx = CU.findIndex(w=>w.id===worldId);
   const prev = CU[idx-1];
   atlasShowModuleReviewGate(app, {
-    subject: 'no',
+    subject: 'sc',
     moduleId: String(prev.id),
     moduleTitle: prev.name,
     lessonTitles: prev.lessons.map(l=>l.title),
@@ -101,11 +101,11 @@ function completeNode(e){
   if(e.perfect) grantBadge('perfect-lesson');
   if(e.isBoss) grantBadge('boss-slayer');
   if(e.combo>=5) grantBadge('speed-master');
-  if(xp>=1000) grantBadge('math-genius');
+  if(xp>=1000) grantBadge('science-genius');
   const w = CU.find(w=>w.id===e.worldId);
   if(w && w.lessons.every(l=>completed[key(w.id,l.id)])) grantBadge('perfect-world');
   if(CU.filter(w2=>w2.lessons.some(l=>completed[key(w2.id,l.id)])).length>=5) grantBadge('explorer-badge');
-  if(e.worldId==='zero' && e.lessonId==='z-boss') grantBadge('guardian');
+  if(e.worldId==='earthhome' && e.lessonId==='eh-boss') grantBadge('planet-guardian');
   const weakTopics = Array.from(new Set([...STATE.weakTopics, ...e.weak])).slice(-8);
   update({completed, xp, coins: STATE.coins+e.coins, scrolls: STATE.scrolls+(e.perfect?1:0), keys: STATE.keys+(e.isBoss?1:0),
     diamonds: STATE.diamonds+(e.isBoss?1:0), badges, weakTopics: e.perfect ? weakTopics.filter(t=>!e.weak.includes(t)) : weakTopics,
@@ -128,12 +128,12 @@ function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=
 
 /* ============================== ROUTER ============================== */
 const app = document.getElementById('app');
-if(window.__noHashListener) window.removeEventListener('hashchange', window.__noHashListener);
-window.__noHashListener = function(){ if(!location.hash.startsWith('#/no')) return; render(); };
-window.addEventListener('hashchange', window.__noHashListener);
+if(window.__scHashListener) window.removeEventListener('hashchange', window.__scHashListener);
+window.__scHashListener = function(){ if(!location.hash.startsWith('#/sc')) return; render(); };
+window.addEventListener('hashchange', window.__scHashListener);
 function render(){
   window.scrollTo(0,0);
-  const hash = location.hash.replace(/^#\/no\/?/,'');
+  const hash = location.hash.replace(/^#\/sc\/?/,'');
   const [path,a,b] = hash.split('/');
   if(path==='lesson'){ renderLesson(a,b); return; }
   if(path==='achievements'){ renderAchievements(); return; }
@@ -148,8 +148,8 @@ function Topbar(){
     <div class="stat-chip">💎 ${STATE.diamonds}</div>
     <div class="stat-chip">❤️ ${STATE.hearts}</div>
     <div class="stat-chip">🔥 ${STATE.streak}</div>
-    <a class="stat-chip" href="#/no/achievements">🏅 ${STATE.badges.length}/${ACHIEVEMENTS.length}</a>
-    <a class="stat-chip" href="#/no/shop">🛍 Shop</a>
+    <a class="stat-chip" href="#/sc/achievements">🏅 ${STATE.badges.length}/${ACHIEVEMENTS.length}</a>
+    <a class="stat-chip" href="#/sc/shop">🛍 Shop</a>
   </div>`;
 }
 
@@ -167,10 +167,10 @@ function renderHome(){
   const body = `
     <div class="card" style="text-align:center">
       <div style="font-size:40px;display:flex;justify-content:center;gap:6px">${avatarEmoji}${petEmoji}</div>
-      <h1 class="font-display" style="font-size:30px;margin:8px 0 4px">Math Odyssey</h1>
-      <p style="color:var(--muted);max-width:520px;margin:0 auto">The Number Thief has stolen the history of mathematics. Travel eleven civilisations, recover every lost number system and unlock the greatest invention of all — zero.</p>
+      <h1 class="font-display" style="font-size:30px;margin:8px 0 4px">Curiosity Quest</h1>
+      <p style="color:var(--muted);max-width:520px;margin:0 auto">Become an investigator, not just a learner. Travel through thirteen realms of science — from invisible microbes to the mysteries of Earth and sky — and answer every "why?" along the way.</p>
       <div style="margin-top:18px">
-        ${curTarget?`<a class="btn btn-primary" href="#/no/lesson/${curTarget.w.id}/${curTarget.l.id}">${doneLessons?'Continue':'Start'} the adventure →</a>`:`<div class="btn btn-primary" style="display:inline-block">🏆 All missions recovered!</div>`}
+        ${curTarget?`<a class="btn btn-primary" href="#/sc/lesson/${curTarget.w.id}/${curTarget.l.id}">${doneLessons?'Continue':'Start'} the adventure →</a>`:`<div class="btn btn-primary" style="display:inline-block">🏆 All missions recovered!</div>`}
       </div>
     </div>
 
@@ -208,9 +208,9 @@ function renderHome(){
     <div>
       ${CU.map(w=>{
         const unlocked = isWorldUnlocked(w.id);
-        const needsReview = worldNeedsReviewNo(w.id);
+        const needsReview = worldNeedsReviewSc(w.id);
         const prog = worldProgress(w.id);
-        const clickAttr = needsReview ? `onclick='__openWorldReviewNo(${JSON.stringify(w.id)})'` : '';
+        const clickAttr = needsReview ? `onclick='__openWorldReviewSc(${JSON.stringify(w.id)})'` : '';
         return `<div class="world-card ${unlocked?'':(needsReview?'needs-review':'locked')}" ${clickAttr} style="background:linear-gradient(135deg,${w.palette.from},${w.palette.to});${needsReview?'cursor:pointer':''}">
           <div style="display:flex;align-items:center;gap:12px">
             <div style="font-size:32px">${unlocked?w.emoji:(needsReview?'📝':'🔒')}</div>
@@ -225,7 +225,7 @@ function renderHome(){
             const done = !!STATE.completed[key(w.id,l.id)];
             const nodeUnlocked = isNodeUnlocked(w.id,l.id);
             const label = l.kind==='boss'?'BOSS BATTLE':l.kind==='minigame'?'MINI GAME':'LESSON';
-            return `<a class="node ${nodeUnlocked?'':'locked'} ${done?'done':''}" href="${nodeUnlocked?'#/no/lesson/'+w.id+'/'+l.id:'#'}">
+            return `<a class="node ${nodeUnlocked?'':'locked'} ${done?'done':''}" href="${nodeUnlocked?'#/sc/lesson/'+w.id+'/'+l.id:'#'}">
               <div class="ic">${nodeUnlocked?(done?'✅':l.icon):'🔒'}</div>
               <div style="margin-top:4px">${l.title}</div>
               <div style="font-size:9px;opacity:.7;margin-top:2px">${label}</div>
@@ -251,7 +251,7 @@ function renderHome(){
 
 /* ---------------- ACHIEVEMENTS ---------------- */
 function renderAchievements(){
-  const body = `<a href="#/no/" style="font-size:13px;color:var(--muted)">← Home</a>
+  const body = `<a href="#/sc/" style="font-size:13px;color:var(--muted)">← Home</a>
     <h1 class="font-display" style="font-size:26px;margin:10px 0 4px">Achievements</h1>
     <p style="color:var(--muted);margin:0 0 16px">${STATE.badges.length} / ${ACHIEVEMENTS.length} unlocked</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px">
@@ -267,7 +267,7 @@ function renderAchievements(){
 
 /* ---------------- SHOP ---------------- */
 function renderShop(){
-  const body = `<a href="#/no/" style="font-size:13px;color:var(--muted)">← Home</a>
+  const body = `<a href="#/sc/" style="font-size:13px;color:var(--muted)">← Home</a>
     <h1 class="font-display" style="font-size:26px;margin:10px 0 16px">Guardian Shop · 🪙 ${STATE.coins}</h1>
     <div class="card">
       <div class="font-display" style="font-size:16px;margin-bottom:10px">Avatars</div>
@@ -302,7 +302,7 @@ function renderShop(){
 function renderLesson(worldId, lessonId){
   const w = CU.find(w=>w.id===worldId);
   const lesson = w?.lessons.find(l=>l.id===lessonId);
-  if(!w||!lesson){ location.hash='#/no/'; return; }
+  if(!w||!lesson){ location.hash='#/sc/'; return; }
   if(!isNodeUnlocked(worldId, lessonId)){ renderHome(); return; }
   const grad = `linear-gradient(150deg, ${w.palette.from}, ${w.palette.to})`;
   let stage = 'story', teachIdx=0, qIdx=0, correctCount=0, combo=0, bestCombo=0, hearts=STATE.hearts, weak=[], status='none', qState={};
@@ -313,7 +313,7 @@ function renderLesson(worldId, lessonId){
     return `<div style="border-radius:32px;padding:2px;background:${grad}">
       <div style="border-radius:30px;background:#0d0818cc;backdrop-filter:blur(14px);padding:20px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-          <a href="#/no/" style="border:2px solid var(--border);border-radius:12px;padding:6px 12px;font-weight:800">✕</a>
+          <a href="#/sc/" style="border:2px solid var(--border);border-radius:12px;padding:6px 12px;font-weight:800">✕</a>
           <div class="progress-track" style="flex:1"><div class="progress-fill" style="width:${progressFrac*100}%;background:${grad}"></div></div>
           <span style="font-weight:800">${'❤️'.repeat(Math.max(hearts,0))||'💀'}</span>
         </div>`;
@@ -363,7 +363,7 @@ function renderLesson(worldId, lessonId){
             <div style="background:#ffffff26;border-radius:14px;padding:8px 16px">🪙 +${qState.__coins||0}</div>
           </div>
           ${qState.__newBadges && qState.__newBadges.length ? `<div style="margin-top:16px">${qState.__newBadges.map(id=>{const a=ACHIEVEMENTS.find(x=>x.id===id); return a?`<div style="background:#ffffff26;border-radius:14px;padding:8px 14px;display:inline-block;margin:3px">${a.icon} ${a.title} unlocked!</div>`:'';}).join('')}</div>`:''}
-          <div style="margin-top:20px"><a class="btn" style="background:#fff;color:#1a1030" href="#/no/">Back to Progress Map</a></div>
+          <div style="margin-top:20px"><a class="btn" style="background:#fff;color:#1a1030" href="#/sc/">Back to Progress Map</a></div>
         </div>
       </main>`;
       return;
@@ -393,25 +393,13 @@ function renderLesson(worldId, lessonId){
       return `<input type="text" id="fillInput" placeholder="${q.placeholder||'your answer'}" ${st.locked?'disabled':''} value="${st.value||''}" oninput="__fillInput(this.value)">
         <button class="btn btn-primary" style="margin-top:12px;width:100%" ${st.locked?'disabled':''} onclick="__ansFill()">Submit</button>`;
     }
-    if(q.kind==='numberline'){
-      const ticks = []; for(let v=q.min; v<=q.max; v+=(q.step||1)) ticks.push(v);
-      return `<div class="numberline-wrap"><div class="numberline-track">${ticks.map(v=>{
-        let cls='numberline-tick'; if(st.picked!==undefined){ if(v===q.answer) cls+=' correct'; else if(v===st.picked) cls+=' wrong'; }
-        return `<button class="${cls}" ${st.picked!==undefined?'disabled':''} onclick="__ansNumberline(${v})"><span class="nl-dot"></span><span class="nl-label">${v}</span></button>`;
-      }).join('')}</div></div>`;
-    }
-    if(q.kind==='balance'){
-      const tiltCls = st.picked===undefined ? '' : (st.picked===q.answer ? 'level' : 'tilt');
-      return `<div class="balance-scale"><div class="balance-stand">
-          <div class="balance-beam ${tiltCls}">
-            <div class="balance-pan left"><div class="pan-content">${q.leftLabel}</div></div>
-            <div class="balance-pan right"><div class="pan-content">${q.rightLabel}</div></div>
-          </div>
-          <div class="balance-fulcrum"></div>
-        </div></div>
-        <div class="balance-options">${q.options.map((opt,i)=>{
-          let cls='balance-tile'; if(st.picked!==undefined){ if(i===q.answer) cls+=' correct'; else if(i===st.picked) cls+=' wrong'; }
-          return `<button class="${cls}" ${st.picked!==undefined?'disabled':''} onclick="__ansBalance(${i})">${opt}</button>`;
+    if(q.kind==='sort'){
+      const dropped = st.picked!==undefined;
+      const wrong = dropped && st.picked!==q.answer;
+      return `<div class="sort-item ${dropped?(wrong?'dropped-wrong':'dropped-correct'):''}">${q.item}</div>
+        <div class="sort-bins">${q.bins.map((bin,i)=>{
+          let cls='sort-bin'; if(dropped){ if(i===q.answer) cls+=' correct'; else if(i===st.picked) cls+=' wrong'; }
+          return `<button class="${cls}" ${dropped?'disabled':''} onclick="__ansSort(${i})"><span class="bin-icon">\u{1F5C2}️</span><span class="bin-label">${bin}</span></button>`;
         }).join('')}</div>`;
     }
     if(q.kind==='numeric'){
@@ -472,15 +460,14 @@ function renderLesson(worldId, lessonId){
     else {
       combo=0; hearts=Math.max(0,hearts-1); update({hearts}); weak.push(w.name);
       const q = questions[qIdx];
-      if(typeof atlasRecordMistake === 'function') atlasRecordMistake('no', w.name||'general', q ? {prompt:q.prompt, type:q.type} : null);
+      if(typeof atlasRecordMistake === 'function') atlasRecordMistake('sc', w.name||'general', q ? {prompt:q.prompt, type:q.type} : null);
     }
     draw();
   }
   window.__ansPick = (i)=>{ const st=qState[qIdx]; if(st.picked!==undefined) return; st.picked=i; resolve(i===questions[qIdx].answer); };
   window.__fillInput = (v)=>{ const st=qState[qIdx]; if(st) st.value=v; };
   window.__ansFill = ()=>{ const st=qState[qIdx]; if(st.locked) return; const val=(st.value||'').trim().toLowerCase(); resolve(val===String(questions[qIdx].answer).toLowerCase()); };
-  window.__ansNumberline = (v)=>{ const st=qState[qIdx]; if(st.picked!==undefined) return; st.picked=v; resolve(v===questions[qIdx].answer); };
-  window.__ansBalance = (i)=>{ const st=qState[qIdx]; if(st.picked!==undefined) return; st.picked=i; resolve(i===questions[qIdx].answer); };
+  window.__ansSort = (i)=>{ const st=qState[qIdx]; if(st.picked!==undefined) return; st.picked=i; resolve(i===questions[qIdx].answer); };
   window.__numKey = (k)=>{
     const st=qState[qIdx]; if(!st || st.locked) return;
     if(k==='⌫') st.entry = (st.entry||'').slice(0,-1);
@@ -534,4 +521,4 @@ render();
 
 }
 window.SubjectApps = window.SubjectApps || {};
-window.SubjectApps['no'] = { init: noInit };
+window.SubjectApps['sc'] = { init: scInit };

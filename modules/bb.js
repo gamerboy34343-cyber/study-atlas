@@ -2,21 +2,21 @@ function bbInit(){
 
 /* ================= DATA ================= */
 const ELEMENTS = {
-  H:{name:'Hydrogen',valence:1,metal:false,color:'#e5e7eb'},
-  Li:{name:'Lithium',valence:1,metal:true,color:'#f472b6'},
-  Na:{name:'Sodium',valence:1,metal:true,color:'#f5a95f'},
-  K:{name:'Potassium',valence:1,metal:true,color:'#e29cf2'},
-  Mg:{name:'Magnesium',valence:2,metal:true,color:'#c9a0e8'},
-  Ca:{name:'Calcium',valence:2,metal:true,color:'#93c5fd'},
-  Al:{name:'Aluminum',valence:3,metal:true,color:'#b0b3bd'},
-  C:{name:'Carbon',valence:4,metal:false,color:'#9ca3af'},
-  N:{name:'Nitrogen',valence:5,metal:false,color:'#60a5fa'},
-  O:{name:'Oxygen',valence:6,metal:false,color:'#f08a7a'},
-  F:{name:'Fluorine',valence:7,metal:false,color:'#7be0c4'},
-  Cl:{name:'Chlorine',valence:7,metal:false,color:'#7fd9a0'},
-  Br:{name:'Bromine',valence:7,metal:false,color:'#c08a5a'},
-  S:{name:'Sulfur',valence:6,metal:false,color:'#f4e07a'},
-  P:{name:'Phosphorus',valence:5,metal:false,color:'#f0a8d0'},
+  H:{name:'Hydrogen',valence:1,metal:false,color:'#e5e7eb',shells:[1]},
+  Li:{name:'Lithium',valence:1,metal:true,color:'#f472b6',shells:[2,1]},
+  Na:{name:'Sodium',valence:1,metal:true,color:'#f5a95f',shells:[2,8,1]},
+  K:{name:'Potassium',valence:1,metal:true,color:'#e29cf2',shells:[2,8,8,1]},
+  Mg:{name:'Magnesium',valence:2,metal:true,color:'#c9a0e8',shells:[2,8,2]},
+  Ca:{name:'Calcium',valence:2,metal:true,color:'#93c5fd',shells:[2,8,8,2]},
+  Al:{name:'Aluminum',valence:3,metal:true,color:'#b0b3bd',shells:[2,8,3]},
+  C:{name:'Carbon',valence:4,metal:false,color:'#9ca3af',shells:[2,4]},
+  N:{name:'Nitrogen',valence:5,metal:false,color:'#60a5fa',shells:[2,5]},
+  O:{name:'Oxygen',valence:6,metal:false,color:'#f08a7a',shells:[2,6]},
+  F:{name:'Fluorine',valence:7,metal:false,color:'#7be0c4',shells:[2,7]},
+  Cl:{name:'Chlorine',valence:7,metal:false,color:'#7fd9a0',shells:[2,8,7]},
+  Br:{name:'Bromine',valence:7,metal:false,color:'#c08a5a',shells:[2,8,18,7]},
+  S:{name:'Sulfur',valence:6,metal:false,color:'#f4e07a',shells:[2,8,6]},
+  P:{name:'Phosphorus',valence:5,metal:false,color:'#f0a8d0',shells:[2,8,5]},
 };
 const IONS = {
   OH:{name:'Hydroxide',charge:-1}, NO3:{name:'Nitrate',charge:-1},
@@ -362,15 +362,30 @@ function renderStage(){
 function atomBadgeHTML(el, size){
   size = size||120;
   const c = ELEMENTS[el].color;
-  let dots='';
-  for(let i=0;i<8;i++){
-    const a = (i/8)*2*Math.PI - Math.PI/2;
-    const r = size/2 + 8;
-    const x = size/2 + r*Math.cos(a), y = size/2 + r*Math.sin(a);
-    dots += `<span class="atom-dot" style="left:${x}px;top:${y}px;transform:translate(-50%,-50%)"></span>`;
-  }
+  const shells = ELEMENTS[el].shells || [ELEMENTS[el].valence];
+  const nucleusSize = Math.max(34, Math.round(size*0.36));
+  const outerR = size/2 - 2;
+  const innerR = nucleusSize/2 + 12;
+  let shellsHtml = '';
+  shells.forEach((n, si)=>{
+    const r = shells.length===1 ? outerR : innerR + (outerR-innerR) * (si/Math.max(1,shells.length-1));
+    const dur = (8 + si*4).toFixed(1);
+    const dir = si%2===0 ? 'normal' : 'reverse';
+    let dots = '';
+    for(let i=0;i<n;i++){
+      const a = (i/n)*2*Math.PI - Math.PI/2;
+      const x = size/2 + r*Math.cos(a), y = size/2 + r*Math.sin(a);
+      dots += `<span class="atom-dot" style="left:${x}px;top:${y}px;transform:translate(-50%,-50%)"></span>`;
+    }
+    shellsHtml += `<div class="atom-shell" style="width:${size}px;height:${size}px;animation-duration:${dur}s;animation-direction:${dir}">
+      <span class="atom-orbit" style="width:${r*2}px;height:${r*2}px;left:${size/2-r}px;top:${size/2-r}px;"></span>
+      ${dots}
+    </div>`;
+  });
   return `<div style="position:relative;width:${size}px;height:${size}px;margin:0 auto;">
-    <div class="atom-badge" style="width:${size}px;height:${size}px;background:${c};color:#0b0a1f;">${el}</div>${dots}</div>`;
+    ${shellsHtml}
+    <div class="atom-badge" style="width:${nucleusSize}px;height:${nucleusSize}px;font-size:${Math.round(nucleusSize*0.4)}px;background:${c};color:#0b0a1f;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);">${el}</div>
+  </div>`;
 }
 
 /* ---- VALENCE ---- */

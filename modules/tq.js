@@ -222,7 +222,7 @@ function renderHome(){
         const unlocked = isWorldUnlocked(i);
         const needsReview = worldNeedsReview(i);
         const done = w.lessons.filter(l=>STATE.completed.includes(l.id)).length;
-        const href = unlocked ? '#/world/'+w.id : '#';
+        const href = unlocked ? '#/tq/world/'+w.id : '#';
         const clickAttr = needsReview ? `onclick="__openWorldReview(${i});return false;"` : '';
         return `<a class="world-card" href="${href}" ${clickAttr} style="background:${grad(w.gradient)};${unlocked||needsReview?'':'filter:grayscale(.6);opacity:.55;pointer-events:none'}">
           <div style="display:flex;align-items:center;gap:14px">
@@ -254,7 +254,7 @@ function renderWorldMap(){
         const needsReview = worldNeedsReview(i);
         const done = w.lessons.filter(l=>STATE.completed.includes(l.id)).length;
         const pct = Math.round(done/w.lessons.length*100);
-        const href = unlocked ? '#/world/'+w.id : '#';
+        const href = unlocked ? '#/tq/world/'+w.id : '#';
         const clickAttr = needsReview ? `onclick="__openWorldReview(${i});return false;"` : '';
         return `<a class="world-card" href="${href}" ${clickAttr} style="background:${grad(w.gradient)};${unlocked||needsReview?'':'filter:grayscale(.6);opacity:.55;pointer-events:none'}">
           <div style="display:flex;align-items:center;gap:14px">
@@ -291,7 +291,7 @@ function renderWorldDetail(worldId){
       ${w.lessons.map((l,i)=>{
         const done = STATE.completed.includes(l.id);
         const unlocked = isLessonUnlocked(l.id);
-        return `<a class="lesson-row ${unlocked?'':'locked'}" href="${unlocked?'#/lesson/'+l.id:'#'}">
+        return `<a class="lesson-row ${unlocked?'':'locked'}" href="${unlocked?'#/tq/lesson/'+l.id:'#'}">
           <div style="width:48px;height:48px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;background:${done?'linear-gradient(135deg,#34d399,#22d3ee)':grad(w.gradient)}">${done?'✓':i+1}</div>
           <div style="flex:1">
             <div class="font-display" style="font-size:16px">${l.title}</div>
