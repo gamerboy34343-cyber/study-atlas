@@ -393,6 +393,12 @@ function renderLesson(worldId, lessonId){
       return `<input type="text" id="fillInput" placeholder="${q.placeholder||'your answer'}" ${st.locked?'disabled':''} value="${st.value||''}" oninput="__fillInput(this.value)">
         <button class="btn btn-primary" style="margin-top:12px;width:100%" ${st.locked?'disabled':''} onclick="__ansFill()">Submit</button>`;
     }
+    if(q.kind==='wordbank'){
+      return `<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:6px">${q.options.map((o,i)=>{
+        let cls='opt-btn'; if(st.picked!==undefined){ if(i===q.answer) cls+=' correct'; else if(i===st.picked) cls+=' wrong'; }
+        return `<button class="${cls}" style="flex:0 1 auto;min-width:110px" ${st.picked!==undefined?'disabled':''} onclick="__ansPick(${i})">${o}</button>`;
+      }).join('')}</div>`;
+    }
     if(q.kind==='passagetap'){
       return `<div class="passage-box">${q.segments.map((s,i)=>{
         if(!s.tap) return `<span>${s.text}</span>`;

@@ -306,6 +306,7 @@ function renderLesson(worldId, lessonId){
   if(!isNodeUnlocked(worldId, lessonId)){ renderHome(); return; }
   const grad = `linear-gradient(150deg, ${w.palette.from}, ${w.palette.to})`;
   let stage = 'story', teachIdx=0, qIdx=0, correctCount=0, combo=0, bestCombo=0, hearts=STATE.hearts, weak=[], status='none', qState={};
+  let scopeState = { specimen:0, focus:0, _inFocus:false, activeHotspot:null, discovered:new Set() };
   const questions = lesson.questions;
   const Q = questions.length;
 
@@ -336,12 +337,14 @@ function renderLesson(worldId, lessonId){
     }
     if(stage==='teach'){
       const t = lesson.teach[teachIdx];
-      app.innerHTML = `<main>${topHeader(0.15)}
+      const teachBody = t.kind==='microscope' ? renderMicroscope(t) : `
         <div style="text-align:center">
           ${t.visual?`<div style="font-size:32px;margin-bottom:10px">${t.visual}</div>`:''}
           <h2 class="font-display" style="font-size:22px;margin:0 0 10px">${t.title}</h2>
           <p style="color:var(--muted);font-size:15.5px;line-height:1.65">${t.body}</p>
-        </div>
+        </div>`;
+      app.innerHTML = `<main>${topHeader(0.15)}
+        ${teachBody}
         <div style="display:flex;justify-content:space-between;margin-top:22px">
           <button class="btn btn-outline" ${teachIdx===0?'disabled style="opacity:.3"':''} onclick="__lBack()">← Back</button>
           <button class="btn btn-primary" onclick="__lNext()">Continue →</button>
@@ -379,6 +382,40 @@ function renderLesson(worldId, lessonId){
           <button class="btn btn-primary" style="margin-top:14px;width:100%" onclick="__lContinueQ()">Continue →</button>`:''}
       </div>
     </div></main>`;
+  }
+
+  function renderMicroscope(t){
+    const sp = t.specimens[scopeState.specimen];
+    const dist = Math.abs(scopeState.focus-50);
+    const inFocus = dist<=10;
+    scopeState._inFocus = inFocus;
+    const blur = inFocus ? 0 : Math.min(8,(dist-10)/5);
+    const shapeSvg = sp.shape==='rect'
+      ? `<rect x="8" y="10" width="84" height="80" rx="6" fill="#bfe6b8" stroke="#3d6b36" stroke-width="2.5"/>`
+      : `<ellipse cx="50" cy="50" rx="44" ry="37" fill="#f3d2ac" stroke="#8a5a2e" stroke-width="2.5"/>`;
+    const found = [...scopeState.discovered].filter(k=>k.startsWith(sp.id+':')).length;
+    return `
+      <div style="text-align:center">
+        <h2 class="font-display" style="font-size:22px;margin:0 0 6px">${t.title}</h2>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 14px">${t.body}</p>
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap">
+          ${t.specimens.map((s,i)=>`<button class="btn ${i===scopeState.specimen?'btn-primary':'btn-outline'}" style="font-size:12px;padding:8px 12px" onclick="__scopeSpecimen(${i})">${s.name}</button>`).join('')}
+        </div>
+        <div style="position:relative;width:220px;height:220px;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 40% 35%,#eafff0,#c9f7d6 60%,#8fd9a8);border:8px solid #2a2438;box-shadow:inset 0 0 30px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.3);overflow:hidden">
+          <svg id="scope-svg" viewBox="0 0 100 100" style="width:100%;height:100%;filter:blur(${blur}px);transition:filter .15s">${shapeSvg}</svg>
+          ${sp.hotspots.map(h=>{
+            const key = sp.id+':'+h.id;
+            const done = scopeState.discovered.has(key);
+            return `<button class="scope-dot" onclick="__scopeHotspot('${h.id}')" style="position:absolute;left:${h.x}%;top:${h.y}%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:${done?'#22c55e':'#facc15'};opacity:${inFocus?1:0};pointer-events:${inFocus?'auto':'none'};box-shadow:0 0 10px rgba(250,204,21,.8);cursor:pointer"></button>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:14px">
+          <input type="range" min="0" max="100" value="${scopeState.focus}" oninput="__scopeFocus(this.value)" style="width:220px">
+          <div id="scope-hint" style="font-size:12px;color:var(--muted);margin-top:4px">${inFocus?'🔍 In focus — tap a glowing dot':'Turning the focus knob…'}</div>
+        </div>
+        ${scopeState.activeHotspot ? (()=>{ const h=sp.hotspots.find(x=>x.id===scopeState.activeHotspot); return h?`<div class="explain-box ok" style="margin-top:14px;text-align:left"><b>${h.label}</b><div style="margin-top:4px">${h.fact}</div></div>`:''; })() : ''}
+        <div style="margin-top:10px;font-size:12px;color:var(--muted)">${found}/${sp.hotspots.length} structures found on this slide</div>
+      </div>`;
   }
 
   function questionBody(q){
@@ -497,6 +534,36 @@ function renderLesson(worldId, lessonId){
     if(stage==='teach'){ if(teachIdx<lesson.teach.length-1){ teachIdx++; } else { stage='question'; status='none'; } draw(); return; }
   };
   window.__lBack = ()=>{ if(stage==='teach'){ if(teachIdx>0) teachIdx--; else stage='story'; draw(); } };
+  window.__scopeFocus = (v)=>{
+    scopeState.focus = +v;
+    const dist = Math.abs(scopeState.focus-50);
+    const wasInFocus = scopeState._inFocus;
+    const inFocus = dist<=10;
+    const blur = inFocus ? 0 : Math.min(8,(dist-10)/5);
+    const svg = document.getElementById('scope-svg');
+    if(svg) svg.style.filter = `blur(${blur}px)`;
+    const hint = document.getElementById('scope-hint');
+    if(hint) hint.textContent = inFocus ? '🔍 In focus — tap a glowing dot' : 'Turning the focus knob…';
+    if(inFocus !== wasInFocus){
+      scopeState._inFocus = inFocus;
+      document.querySelectorAll('.scope-dot').forEach(d=>{
+        d.style.opacity = inFocus ? '1' : '0';
+        d.style.pointerEvents = inFocus ? 'auto' : 'none';
+      });
+    }
+  };
+  window.__scopeSpecimen = (i)=>{
+    scopeState.specimen = i; scopeState.focus = 0; scopeState._inFocus = false; scopeState.activeHotspot = null;
+    draw();
+  };
+  window.__scopeHotspot = (id)=>{
+    if(!scopeState._inFocus) return;
+    const t = lesson.teach[teachIdx];
+    const sp = t.specimens[scopeState.specimen];
+    scopeState.discovered.add(sp.id+':'+id);
+    scopeState.activeHotspot = id;
+    draw();
+  };
   window.__lContinueQ = ()=>{
     status='none';
     if(qIdx<Q-1){ qIdx++; draw(); return; }

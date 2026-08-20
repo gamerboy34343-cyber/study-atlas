@@ -12,3 +12,15 @@ function atlasRecordMistake(subject, topic, question){
     question: question || null,
   }).then(({error}) => { if(error) console.error('could not record mistake', error); });
 }
+
+/* Called once a weak spot has been answered correctly in an Adaptive Practice
+   round, so it stops being logged as an outstanding mistake and stops
+   resurfacing in future practice sessions. */
+function atlasResolveMistake(subject, topic){
+  if(!atlasUser) return;
+  atlasSB.from('mistakes').delete()
+    .eq('user_id', atlasUser.id)
+    .eq('subject', subject)
+    .eq('topic', String(topic || 'general'))
+    .then(({error}) => { if(error) console.error('could not resolve mistake', error); });
+}

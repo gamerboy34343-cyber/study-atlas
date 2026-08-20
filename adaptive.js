@@ -3,6 +3,7 @@ let apQuestions = [];
 let apIdx = 0;
 let apScore = 0;
 let apPicked = null;
+let apResolved = [];
 
 async function atlasFetchMistakes(limit){
   if(!atlasUser) return [];
@@ -91,7 +92,7 @@ async function atlasGenerateAdaptiveQuiz(){
     const data = await res.json();
     if(!Array.isArray(data.questions) || data.questions.length === 0) throw new Error('No questions were generated.');
     apQuestions = data.questions;
-    apIdx = 0; apScore = 0; apPicked = null;
+    apIdx = 0; apScore = 0; apPicked = null; apResolved = [];
     if(btn) btn.style.display = 'none';
     apDrawQuestion();
   }catch(err){
@@ -114,6 +115,15 @@ function apDrawQuestion(){
     const xpEarned = apScore * 10, coinsEarned = apScore * 3;
     if(xpEarned && typeof atlasAddXp === 'function') atlasAddXp(xpEarned);
     if(coinsEarned && typeof atlasAddCoins === 'function') atlasAddCoins(coinsEarned);
+    if(typeof atlasResolveMistake === 'function'){
+      const seen = new Set();
+      apResolved.forEach(r => {
+        const key = r.subject + '::' + r.topic;
+        if(seen.has(key)) return;
+        seen.add(key);
+        atlasResolveMistake(r.subject, r.topic);
+      });
+    }
     area.innerHTML = `<div class="lb-me-footer" style="margin-top:0">
       <div style="font-size:20px;font-weight:800;margin-bottom:6px">🎉 ${apScore}/${apQuestions.length} correct (${pct}%)</div>
       <div>✨ +${xpEarned} XP · 🪙 +${coinsEarned} coins</div>
@@ -146,7 +156,11 @@ function apDrawQuestion(){
 function apAnswer(i){
   if(apPicked !== null) return;
   apPicked = i;
-  if(i === apQuestions[apIdx].answerIndex) apScore++;
+  const q = apQuestions[apIdx];
+  if(i === q.answerIndex){
+    apScore++;
+    apResolved.push({ subject: q.subject, topic: q.topic });
+  }
   apDrawQuestion();
 }
 
