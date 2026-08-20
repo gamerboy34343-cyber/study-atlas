@@ -46,22 +46,11 @@ function update(patch){
   }
 }
 const key = (w,l)=>`${w}:${l}`;
-function worldPrevDoneHi(idx){
-  if(idx<=0) return true;
-  const prev = CU[idx-1];
-  return !prev || prev.lessons.every(l=>!!STATE.completed[key(prev.id,l.id)]);
-}
-function worldReviewPassedHi(idx){
-  if(idx<=0) return true;
-  return typeof atlasModulePassed !== 'function' || atlasModulePassed('hi', String(CU[idx-1].id));
-}
 function isWorldUnlocked(worldId){
-  const idx = CU.findIndex(w=>w.id===worldId);
-  return worldPrevDoneHi(idx) && worldReviewPassedHi(idx);
+  return true;
 }
 function worldNeedsReviewHi(worldId){
-  const idx = CU.findIndex(w=>w.id===worldId);
-  return idx>0 && worldPrevDoneHi(idx) && !worldReviewPassedHi(idx);
+  return false;
 }
 window.__openWorldReviewHi = (worldId)=>{
   const idx = CU.findIndex(w=>w.id===worldId);

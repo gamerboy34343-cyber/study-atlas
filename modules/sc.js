@@ -46,22 +46,11 @@ function update(patch){
   }
 }
 const key = (w,l)=>`${w}:${l}`;
-function worldPrevDoneSc(idx){
-  if(idx<=0) return true;
-  const prev = CU[idx-1];
-  return !prev || prev.lessons.every(l=>!!STATE.completed[key(prev.id,l.id)]);
-}
-function worldReviewPassedSc(idx){
-  if(idx<=0) return true;
-  return typeof atlasModulePassed !== 'function' || atlasModulePassed('sc', String(CU[idx-1].id));
-}
 function isWorldUnlocked(worldId){
-  const idx = CU.findIndex(w=>w.id===worldId);
-  return worldPrevDoneSc(idx) && worldReviewPassedSc(idx);
+  return true;
 }
 function worldNeedsReviewSc(worldId){
-  const idx = CU.findIndex(w=>w.id===worldId);
-  return idx>0 && worldPrevDoneSc(idx) && !worldReviewPassedSc(idx);
+  return false;
 }
 window.__openWorldReviewSc = (worldId)=>{
   const idx = CU.findIndex(w=>w.id===worldId);
@@ -307,6 +296,7 @@ function renderLesson(worldId, lessonId){
   const grad = `linear-gradient(150deg, ${w.palette.from}, ${w.palette.to})`;
   let stage = 'story', teachIdx=0, qIdx=0, correctCount=0, combo=0, bestCombo=0, hearts=STATE.hearts, weak=[], status='none', qState={};
   let scopeState = { specimen:0, focus:0, _inFocus:false, activeHotspot:null, discovered:new Set() };
+  let benchState = { mode:0, dist:70 };
   const questions = lesson.questions;
   const Q = questions.length;
 
@@ -337,7 +327,7 @@ function renderLesson(worldId, lessonId){
     }
     if(stage==='teach'){
       const t = lesson.teach[teachIdx];
-      const teachBody = t.kind==='microscope' ? renderMicroscope(t) : `
+      const teachBody = t.kind==='microscope' ? renderMicroscope(t) : t.kind==='opticalbench' ? renderOpticalBench(t) : `
         <div style="text-align:center">
           ${t.visual?`<div style="font-size:32px;margin-bottom:10px">${t.visual}</div>`:''}
           <h2 class="font-display" style="font-size:22px;margin:0 0 10px">${t.title}</h2>
@@ -415,6 +405,75 @@ function renderLesson(worldId, lessonId){
         </div>
         ${scopeState.activeHotspot ? (()=>{ const h=sp.hotspots.find(x=>x.id===scopeState.activeHotspot); return h?`<div class="explain-box ok" style="margin-top:14px;text-align:left"><b>${h.label}</b><div style="margin-top:4px">${h.fact}</div></div>`:''; })() : ''}
         <div style="margin-top:10px;font-size:12px;color:var(--muted)">${found}/${sp.hotspots.length} structures found on this slide</div>
+      </div>`;
+  }
+
+  const BENCH_MODES = [
+    { id:'cc-mirror', name:'Concave Mirror', category:'mirror', converging:true },
+    { id:'cx-mirror', name:'Convex Mirror', category:'mirror', converging:false },
+    { id:'cx-lens', name:'Convex Lens', category:'lens', converging:true },
+    { id:'cc-lens', name:'Concave Lens', category:'lens', converging:false },
+  ];
+  const BENCH_TABLE = {
+    mirror: {
+      far:     { x:195, h:14, orient:'down', real:true,  label:'Real · Inverted · Smaller' },
+      mid:     { x:170, h:42, orient:'down', real:true,  label:'Real · Inverted · Larger' },
+      near:    { x:280, h:42, orient:'up',   real:false, label:'Virtual · Erect · Larger' },
+      diverge: { x:280, h:16, orient:'up',   real:false, label:'Virtual · Erect · Smaller' },
+    },
+    lens: {
+      far:     { x:270, h:14, orient:'down', real:true,  label:'Real · Inverted · Smaller' },
+      mid:     { x:300, h:42, orient:'down', real:true,  label:'Real · Inverted · Larger' },
+      near:    { x:150, h:42, orient:'up',   real:false, label:'Virtual · Erect · Larger' },
+      diverge: { x:205, h:16, orient:'up',   real:false, label:'Virtual · Erect · Smaller' },
+    },
+  };
+  function benchZone(mode, dist){
+    if(!mode.converging) return 'diverge';
+    return dist>65 ? 'far' : (dist>35 ? 'mid' : 'near');
+  }
+  function benchDeviceSvg(mode){
+    if(mode.category==='mirror'){
+      const bulge = mode.converging ? 220 : 260;
+      return `<path d="M240 45 Q ${bulge} 75 240 105" fill="none" stroke="#c4b5fd" stroke-width="3"/>`;
+    }
+    if(mode.converging){
+      return `<path d="M240 45 Q250 75 240 105 Q230 75 240 45 Z" fill="#c4b5fd44" stroke="#c4b5fd" stroke-width="2.5"/>`;
+    }
+    return `<path d="M234 45 Q244 75 234 105 M246 45 Q236 75 246 105" fill="none" stroke="#c4b5fd" stroke-width="2.5"/>`;
+  }
+  function benchSvgInner(mode, dist){
+    const zone = benchZone(mode, dist);
+    const img = BENCH_TABLE[mode.category][zone];
+    const xObj = 220 - (dist/100)*170;
+    const objTip = 75-28, imgTip = img.orient==='down' ? 75+img.h : 75-img.h;
+    return `
+      <line x1="15" y1="75" x2="310" y2="75" stroke="#4b4568" stroke-width="1.5"/>
+      ${benchDeviceSvg(mode)}
+      <text x="240" y="122" text-anchor="middle" font-size="9" fill="#9c93c2">${mode.name}</text>
+      <line x1="${xObj}" y1="75" x2="${xObj}" y2="${objTip}" stroke="#F0B429" stroke-width="2.5"/>
+      <polygon points="${xObj-4},${objTip+7} ${xObj+4},${objTip+7} ${xObj},${objTip}" fill="#F0B429"/>
+      <line x1="${img.x}" y1="75" x2="${img.x}" y2="${imgTip}" stroke="#7C3AED" stroke-width="2.5" ${img.real?'':'stroke-dasharray="4 3"'}/>
+      <polygon points="${img.x-4},${imgTip+(img.orient==='down'?-7:7)} ${img.x+4},${imgTip+(img.orient==='down'?-7:7)} ${img.x},${imgTip}" fill="#7C3AED"/>
+      <text id="bench-label" x="160" y="140" text-anchor="middle" font-size="11" font-weight="700" fill="#EDE6FB">${img.label}</text>
+    `;
+  }
+  function renderOpticalBench(t){
+    const mode = BENCH_MODES[benchState.mode];
+    return `
+      <div style="text-align:center">
+        <h2 class="font-display" style="font-size:22px;margin:0 0 6px">${t.title}</h2>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 14px">${t.body}</p>
+        <div style="display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap">
+          ${BENCH_MODES.map((m,i)=>`<button class="btn ${i===benchState.mode?'btn-primary':'btn-outline'}" style="font-size:11px;padding:7px 10px" onclick="__benchMode(${i})">${m.name}</button>`).join('')}
+        </div>
+        <div style="background:#0d0818;border-radius:16px;padding:6px">
+          <svg id="bench-svg" viewBox="0 0 320 150" style="width:100%;height:170px">${benchSvgInner(mode, benchState.dist)}</svg>
+        </div>
+        <div style="margin-top:14px">
+          <input type="range" min="0" max="100" value="${benchState.dist}" oninput="__benchDist(this.value)" style="width:240px">
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">← Move the object closer or farther</div>
+        </div>
       </div>`;
   }
 
@@ -563,6 +622,15 @@ function renderLesson(worldId, lessonId){
     scopeState.discovered.add(sp.id+':'+id);
     scopeState.activeHotspot = id;
     draw();
+  };
+  window.__benchMode = (i)=>{
+    benchState.mode = i; benchState.dist = 70;
+    draw();
+  };
+  window.__benchDist = (v)=>{
+    benchState.dist = +v;
+    const svg = document.getElementById('bench-svg');
+    if(svg) svg.innerHTML = benchSvgInner(BENCH_MODES[benchState.mode], benchState.dist);
   };
   window.__lContinueQ = ()=>{
     status='none';
