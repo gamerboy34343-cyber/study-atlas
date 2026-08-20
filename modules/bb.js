@@ -178,23 +178,31 @@ let progress = JSON.parse(localStorage.getItem(STORE_KEY) || '{"stars":{},"xp":0
 if(typeof atlasProfile !== 'undefined' && atlasProfile){ progress.xp = atlasProfile.xp||0; progress.coins = atlasProfile.coins||0; }
 function saveProgress(){ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }
 function totalStars(){ return Object.values(progress.stars).reduce((a,b)=>a+b,0); }
-function worldPrevDoneBb(worldIdx){
-  if(worldIdx===0) return true;
-  return WORLDS[worldIdx-1].levels.every(l=>progress.stars[l.num]!==undefined);
+function activeUnreviewedWorldBb(){
+  for(let wi=0; wi<WORLDS.length; wi++){
+    const started = WORLDS[wi].levels.some(l=>progress.stars[l.num]!==undefined);
+    const reviewed = typeof atlasModulePassed !== 'function' || atlasModulePassed('bb', String(wi));
+    if(started && !reviewed) return wi;
+  }
+  return -1;
 }
-function worldReviewPassedBb(worldIdx){
-  if(worldIdx===0) return true;
-  return typeof atlasModulePassed !== 'function' || atlasModulePassed('bb', String(worldIdx-1));
+function isWorldUnlockedBb(worldIdx){
+  const active = activeUnreviewedWorldBb();
+  return active===-1 || active===worldIdx;
 }
-function isWorldUnlockedBb(worldIdx){ return worldPrevDoneBb(worldIdx) && worldReviewPassedBb(worldIdx); }
-function worldNeedsReviewBb(worldIdx){ return worldIdx>0 && worldPrevDoneBb(worldIdx) && !worldReviewPassedBb(worldIdx); }
-function openWorldReviewBb(worldIdx){
-  const prevWorld = WORLDS[worldIdx-1];
+function worldNeedsReviewBb(worldIdx){
+  const active = activeUnreviewedWorldBb();
+  return active!==-1 && active!==worldIdx;
+}
+function openWorldReviewBb(){
+  const active = activeUnreviewedWorldBb();
+  if(active===-1){ renderMap(); return; }
+  const w = WORLDS[active];
   atlasShowModuleReviewGate(document.getElementById('worlds'), {
     subject: 'bb',
-    moduleId: String(worldIdx-1),
-    moduleTitle: prevWorld.title,
-    lessonTitles: prevWorld.levels.map(l=>l.title),
+    moduleId: String(active),
+    moduleTitle: w.title,
+    lessonTitles: w.levels.map(l=>l.title),
     onPass: renderMap,
     onExit: renderMap,
   });
@@ -248,7 +256,7 @@ function renderMap(){
     block.innerHTML = `<div class="world-label">World ${wi+1}</div><div class="world-title">${w.title}</div>
       ${needsReview ? `<button class="world-review-banner">📝 Module Review required to unlock — tap to start</button>` : ''}
       <div class="level-grid"></div>`;
-    if(needsReview) block.querySelector('.world-review-banner').onclick = ()=>openWorldReviewBb(wi);
+    if(needsReview) block.querySelector('.world-review-banner').onclick = ()=>openWorldReviewBb();
     const grid = block.querySelector('.level-grid');
     w.levels.forEach(lv=>{
       const unlocked = isUnlocked(lv.num);

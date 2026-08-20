@@ -10,7 +10,7 @@ const SUBJECT_NAMES = {
   mr: 'History (Maratha Quest — rise of the Marathas)',
   co: 'History (Colonial Quest — European powers and the Company Raj)',
   gq: 'Geography (Gaia Quest — natural resources)',
-  tq: 'English (Tense Quest — the 12 tenses)',
+  tq: 'English (Wordsmith Quest — tenses, modals, voice & more)',
   no: 'Math (Math Odyssey — number systems)',
   sc: 'Science (Curiosity Quest — cells to the cosmos)',
   hi: 'Hindi (Malhar — poetry, stories, and literature)',

@@ -2,7 +2,7 @@
    and reopens instantly, while leaving Supabase/API calls untouched (always
    go to the network; the app already handles being offline for those). */
 
-const CACHE_VERSION = 'study-atlas-v3';
+const CACHE_VERSION = 'study-atlas-v4';
 
 const PRECACHE_URLS = [
   './',
@@ -37,10 +37,11 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Precache the new version, but stay in "waiting" until the page tells us
+  // to take over — that's the signal the update-available prompt is built on.
   event.waitUntil(
     caches.open(CACHE_VERSION)
       .then((cache) => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
   );
 });
 
@@ -50,6 +51,10 @@ self.addEventListener('activate', (event) => {
       .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('fetch', (event) => {

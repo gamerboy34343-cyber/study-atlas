@@ -84,12 +84,34 @@ function update(patch){
     if(dCoins && typeof atlasAddCoins === 'function') atlasAddCoins(dCoins);
   }
 }
+function activeUnreviewedChapterCo(){
+  for(const c of CHAPTERS){
+    const started = (STATE.chapterAcc[c.id]?.seen ?? 0) > 0;
+    const reviewed = typeof atlasModulePassed !== 'function' || atlasModulePassed('co', String(c.id));
+    if(started && !reviewed) return c;
+  }
+  return null;
+}
 function isChapterUnlockedCo(i){
-  return true;
+  const active = activeUnreviewedChapterCo();
+  return !active || active.id===CHAPTERS[i].id;
 }
 function chapterNeedsReviewCo(i){
-  return false;
+  const active = activeUnreviewedChapterCo();
+  return !!active && active.id!==CHAPTERS[i].id;
 }
+window.__openChapterReviewCo = ()=>{
+  const active = activeUnreviewedChapterCo();
+  if(!active){ renderStoryList(); return; }
+  atlasShowModuleReviewGate(app, {
+    subject: 'co',
+    moduleId: String(active.id),
+    moduleTitle: active.title,
+    lessonTitles: [active.title],
+    onPass: renderStoryList,
+    onExit: renderStoryList,
+  });
+};
 function recordHistory(correct){
   const t = todayStr();
   const h = [...STATE.history];
@@ -252,7 +274,7 @@ function renderStoryList(){
     const unlocked = isChapterUnlockedCo(i);
     const needsReview = chapterNeedsReviewCo(i);
     const href = unlocked ? '#/co/story?chapter='+c.id : '#';
-    const clickAttr = needsReview ? `onclick="__openChapterReviewCo(${i});return false;"` : '';
+    const clickAttr = needsReview ? `onclick="__openChapterReviewCo();return false;"` : '';
     return `<a class="chapter-card ${unlocked?'':(needsReview?'needs-review':'locked')}" href="${href}" ${clickAttr}>
       <div class="ic">${unlocked?c.emoji:(needsReview?'📝':'🔒')}</div>
       <div>

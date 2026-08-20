@@ -46,31 +46,30 @@ function update(patch){
   }
 }
 const key = (w,l)=>`${w}:${l}`;
-function worldPrevDoneNo(idx){
-  if(idx<=0) return true;
-  const prev = CU[idx-1];
-  return !prev || prev.lessons.every(l=>!!STATE.completed[key(prev.id,l.id)]);
-}
-function worldReviewPassedNo(idx){
-  if(idx<=0) return true;
-  return typeof atlasModulePassed !== 'function' || atlasModulePassed('no', String(CU[idx-1].id));
+function activeUnreviewedWorldNo(){
+  for(const w of CU){
+    const started = w.lessons.some(l=>!!STATE.completed[key(w.id,l.id)]);
+    const reviewed = typeof atlasModulePassed !== 'function' || atlasModulePassed('no', String(w.id));
+    if(started && !reviewed) return w;
+  }
+  return null;
 }
 function isWorldUnlocked(worldId){
-  const idx = CU.findIndex(w=>w.id===worldId);
-  return worldPrevDoneNo(idx) && worldReviewPassedNo(idx);
+  const active = activeUnreviewedWorldNo();
+  return !active || active.id===worldId;
 }
 function worldNeedsReviewNo(worldId){
-  const idx = CU.findIndex(w=>w.id===worldId);
-  return idx>0 && worldPrevDoneNo(idx) && !worldReviewPassedNo(idx);
+  const active = activeUnreviewedWorldNo();
+  return !!active && active.id!==worldId;
 }
-window.__openWorldReviewNo = (worldId)=>{
-  const idx = CU.findIndex(w=>w.id===worldId);
-  const prev = CU[idx-1];
+window.__openWorldReviewNo = ()=>{
+  const active = activeUnreviewedWorldNo();
+  if(!active){ render(); return; }
   atlasShowModuleReviewGate(app, {
     subject: 'no',
-    moduleId: String(prev.id),
-    moduleTitle: prev.name,
-    lessonTitles: prev.lessons.map(l=>l.title),
+    moduleId: String(active.id),
+    moduleTitle: active.name,
+    lessonTitles: active.lessons.map(l=>l.title),
     onPass: render,
     onExit: render,
   });
@@ -210,7 +209,7 @@ function renderHome(){
         const unlocked = isWorldUnlocked(w.id);
         const needsReview = worldNeedsReviewNo(w.id);
         const prog = worldProgress(w.id);
-        const clickAttr = needsReview ? `onclick='__openWorldReviewNo(${JSON.stringify(w.id)})'` : '';
+        const clickAttr = needsReview ? `onclick='__openWorldReviewNo()'` : '';
         return `<div class="world-card ${unlocked?'':(needsReview?'needs-review':'locked')}" ${clickAttr} style="background:linear-gradient(135deg,${w.palette.from},${w.palette.to});${needsReview?'cursor:pointer':''}">
           <div style="display:flex;align-items:center;gap:12px">
             <div style="font-size:32px">${unlocked?w.emoji:(needsReview?'📝':'🔒')}</div>

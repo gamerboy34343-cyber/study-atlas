@@ -1376,7 +1376,7 @@ button{font-family:inherit;cursor:pointer;}
   <a href="#/mr" data-route="mr">🚩 Maratha Quest</a>
   <a href="#/co" data-route="co">⛵ Colonial Quest</a>
   <a href="#/gq" data-route="gq">🌱 Gaia Quest</a>
-  <a href="#/tq" data-route="tq">📖 Tense Quest</a>
+  <a href="#/tq" data-route="tq">✍️ Wordsmith Quest</a>
   <a href="#/no" data-route="no">🔢 Math Odyssey</a>
   <a href="#/sc" data-route="sc">🔬 Curiosity Quest</a>
   <a href="#/hi" data-route="hi">📖 मल्हार</a>
@@ -1513,7 +1513,7 @@ const SUBJECTS_INFO = [
   {prefix:'mr', emoji:'🚩', name:'Maratha Quest', sub:'Swarajya & the Rise of the Marathas — History'},
   {prefix:'co', emoji:'⛵', name:'Colonial Quest', sub:'Trade, Conquest & the Company Raj — History'},
   {prefix:'gq', emoji:'🌱', name:'Gaia Quest', sub:'Natural Resources — Geography'},
-  {prefix:'tq', emoji:'📖', name:'Tense Quest', sub:'Master the 12 Tenses — English'},
+  {prefix:'tq', emoji:'✍️', name:'Wordsmith Quest', sub:'Tenses, Modals, Voice & More — English'},
   {prefix:'no', emoji:'🔢', name:'Math Odyssey', sub:'The Story of Numbers — Math'},
   {prefix:'sc', emoji:'🔬', name:'Curiosity Quest', sub:'Cells to the Cosmos — Science'},
   {prefix:'hi', emoji:'📖', name:'मल्हार', sub:'कविता, कहानी और साहित्य — Hindi'},
@@ -1781,7 +1781,42 @@ atlasInit();
 
 if('serviceWorker' in navigator && location.protocol !== 'file:'){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(err => console.error('SW registration failed', err));
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      function promptForUpdate(worker){
+        if(document.getElementById('sw-update-toast')) return;
+        const toast = document.createElement('div');
+        toast.id = 'sw-update-toast';
+        toast.style.cssText = 'position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:9999;'
+          + 'background:#1e1938;border:1px solid #3a3168;border-radius:14px;padding:12px 14px;'
+          + 'display:flex;align-items:center;gap:12px;box-shadow:0 8px 28px rgba(0,0,0,.45);'
+          + 'font-family:inherit;color:#f1eefc;font-size:13.5px;max-width:92vw;';
+        toast.innerHTML = '<span>✨ A new version is ready.</span>'
+          + '<button id="sw-update-btn" style="background:#fbbf24;color:#1e1938;border:none;border-radius:10px;'
+          + 'padding:7px 12px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap">Update</button>';
+        document.body.appendChild(toast);
+        document.getElementById('sw-update-btn').addEventListener('click', () => {
+          worker.postMessage({type:'SKIP_WAITING'});
+          toast.querySelector('button').textContent = 'Updating…';
+        });
+      }
+      // A worker already waiting when we registered (e.g. tab was open during a deploy).
+      if(reg.waiting && navigator.serviceWorker.controller) promptForUpdate(reg.waiting);
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if(!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+            promptForUpdate(newWorker);
+          }
+        });
+      });
+      let reloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if(reloading) return;
+        reloading = true;
+        window.location.reload();
+      });
+    }).catch(err => console.error('SW registration failed', err));
   });
 }
 </script>

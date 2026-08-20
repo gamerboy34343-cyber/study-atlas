@@ -46,20 +46,30 @@ function update(patch){
   }
 }
 const key = (w,l)=>`${w}:${l}`;
+function activeUnreviewedWorldHi(){
+  for(const w of CU){
+    const started = w.lessons.some(l=>!!STATE.completed[key(w.id,l.id)]);
+    const reviewed = typeof atlasModulePassed !== 'function' || atlasModulePassed('hi', String(w.id));
+    if(started && !reviewed) return w;
+  }
+  return null;
+}
 function isWorldUnlocked(worldId){
-  return true;
+  const active = activeUnreviewedWorldHi();
+  return !active || active.id===worldId;
 }
 function worldNeedsReviewHi(worldId){
-  return false;
+  const active = activeUnreviewedWorldHi();
+  return !!active && active.id!==worldId;
 }
-window.__openWorldReviewHi = (worldId)=>{
-  const idx = CU.findIndex(w=>w.id===worldId);
-  const prev = CU[idx-1];
+window.__openWorldReviewHi = ()=>{
+  const active = activeUnreviewedWorldHi();
+  if(!active){ render(); return; }
   atlasShowModuleReviewGate(app, {
     subject: 'hi',
-    moduleId: String(prev.id),
-    moduleTitle: prev.name,
-    lessonTitles: prev.lessons.map(l=>l.title),
+    moduleId: String(active.id),
+    moduleTitle: active.name,
+    lessonTitles: active.lessons.map(l=>l.title),
     onPass: render,
     onExit: render,
   });
@@ -199,7 +209,7 @@ function renderHome(){
         const unlocked = isWorldUnlocked(w.id);
         const needsReview = worldNeedsReviewHi(w.id);
         const prog = worldProgress(w.id);
-        const clickAttr = needsReview ? `onclick='__openWorldReviewHi(${JSON.stringify(w.id)})'` : '';
+        const clickAttr = needsReview ? `onclick='__openWorldReviewHi()'` : '';
         return `<div class="world-card ${unlocked?'':(needsReview?'needs-review':'locked')}" ${clickAttr} style="background:linear-gradient(135deg,${w.palette.from},${w.palette.to});${needsReview?'cursor:pointer':''}">
           <div style="display:flex;align-items:center;gap:12px">
             <div style="font-size:32px">${unlocked?w.emoji:(needsReview?'📝':'🔒')}</div>

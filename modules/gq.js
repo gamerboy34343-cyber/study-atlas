@@ -24,28 +24,30 @@ function update(patch){
   }
 }
 function progKey(w,l){ return `${w}-${l}`; }
-function worldPrevDone(i){
-  if(i===0) return true;
-  const prevWorld = WORLDS[i-1];
-  return prevWorld.levels.every(l=>(STATE.progress[progKey(prevWorld.id,l.id)]?.stars??0)>0);
+function activeUnreviewedWorldGq(){
+  for(const w of WORLDS){
+    const started = w.levels.some(l=>(STATE.progress[progKey(w.id,l.id)]?.stars??0)>0);
+    const reviewed = typeof atlasModulePassed !== 'function' || atlasModulePassed('gq', String(w.id));
+    if(started && !reviewed) return w;
+  }
+  return null;
 }
-function worldReviewPassed(i){
-  if(i===0) return true;
-  return typeof atlasModulePassed !== 'function' || atlasModulePassed('gq', WORLDS[i-1].id);
+function isWorldUnlockedGq(i){
+  const active = activeUnreviewedWorldGq();
+  return !active || active.id===WORLDS[i].id;
 }
-function worldAlreadyStarted(i){
-  const w = WORLDS[i];
-  return w.levels.filter(l=>(STATE.progress[progKey(w.id,l.id)]?.stars??0)>0).length > 0;
+function worldNeedsReviewGq(i){
+  const active = activeUnreviewedWorldGq();
+  return !!active && active.id!==WORLDS[i].id;
 }
-function isWorldUnlockedGq(i){ return i===0 || worldAlreadyStarted(i) || (worldPrevDone(i) && worldReviewPassed(i)); }
-function worldNeedsReviewGq(i){ return i>0 && !worldAlreadyStarted(i) && worldPrevDone(i) && !worldReviewPassed(i); }
-window.__openWorldReviewGq = (i)=>{
-  const prev = WORLDS[i-1];
+window.__openWorldReviewGq = ()=>{
+  const active = activeUnreviewedWorldGq();
+  if(!active){ render(); return; }
   atlasShowModuleReviewGate(app, {
     subject: 'gq',
-    moduleId: String(prev.id),
-    moduleTitle: prev.title,
-    lessonTitles: prev.levels.map(l=>l.title),
+    moduleId: String(active.id),
+    moduleTitle: active.title,
+    lessonTitles: active.levels.map(l=>l.title),
     onPass: render,
     onExit: render,
   });
@@ -182,7 +184,7 @@ function renderHome(){
         const needsReview = worldNeedsReviewGq(i);
         const pct = completed/w.levels.length*100;
         const href = unlocked ? '#/gq/world/'+w.slug : '#';
-        const clickAttr = needsReview ? `onclick="__openWorldReviewGq(${i});return false;"` : '';
+        const clickAttr = needsReview ? `onclick="__openWorldReviewGq();return false;"` : '';
         const stateClass = unlocked ? '' : (needsReview ? 'needs-review' : 'locked');
         return `<a class="world-card glass-strong ${stateClass}" href="${href}" ${clickAttr}>
           <div class="glow" style="background:${w.gradient}"></div>

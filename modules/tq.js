@@ -97,19 +97,21 @@ function update(patch){
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 function daysBetween(a,b){ return Math.round((new Date(b).getTime()-new Date(a).getTime())/86400000); }
 function worldsUnlocked(completed){ let n=1; for(let i=0;i<WORLDS_BASE.length-1 && WORLDS_BASE[i].lessons.every(l=>completed.includes(l.id)); i++) n=Math.min(WORLDS_BASE.length, n+1); return n; }
+function activeUnreviewedWorld(){
+  for(const w of WORLDS_BASE){
+    const started = w.lessons.some(l=>STATE.completed.includes(l.id));
+    const reviewed = typeof atlasModulePassed !== 'function' || atlasModulePassed('tq', w.id);
+    if(started && !reviewed) return w;
+  }
+  return null;
+}
 function isWorldUnlocked(idx){
-  if(idx===0) return true;
-  const prev=WORLDS_BASE[idx-1];
-  const prevDone = prev.lessons.every(l=>STATE.completed.includes(l.id));
-  const reviewPassed = typeof atlasModulePassed !== 'function' || atlasModulePassed('tq', prev.id);
-  return prevDone && reviewPassed;
+  const active = activeUnreviewedWorld();
+  return !active || active.id===WORLDS_BASE[idx].id;
 }
 function worldNeedsReview(idx){
-  if(idx===0) return false;
-  const prev=WORLDS_BASE[idx-1];
-  const prevDone = prev.lessons.every(l=>STATE.completed.includes(l.id));
-  const reviewPassed = typeof atlasModulePassed !== 'function' || atlasModulePassed('tq', prev.id);
-  return prevDone && !reviewPassed;
+  const active = activeUnreviewedWorld();
+  return !!active && active.id!==WORLDS_BASE[idx].id;
 }
 function isLessonUnlocked(lessonId){
   const idx=ALL_LESSONS.findIndex(l=>l.id===lessonId);
@@ -120,13 +122,14 @@ function isLessonUnlocked(lessonId){
   if(worldIdx>0 && WORLDS_BASE[worldIdx].lessons[0].id===lessonId) return isWorldUnlocked(worldIdx);
   return true;
 }
-window.__openWorldReview = (idx)=>{
-  const prev = WORLDS_BASE[idx-1];
+window.__openWorldReview = ()=>{
+  const active = activeUnreviewedWorld();
+  if(!active){ renderWorldMap(); return; }
   atlasShowModuleReviewGate(app, {
     subject: 'tq',
-    moduleId: prev.id,
-    moduleTitle: prev.title,
-    lessonTitles: prev.lessons.map(l=>l.title),
+    moduleId: active.id,
+    moduleTitle: active.title,
+    lessonTitles: active.lessons.map(l=>l.title),
     onPass: renderWorldMap,
     onExit: renderWorldMap,
   });
@@ -192,7 +195,7 @@ function renderHome(){
   app.innerHTML = `${Topbar()}<main>
     <div class="card" style="text-align:center">
       <div class="pill" style="background:linear-gradient(135deg,#8b7bf0,#6d5cd6)">✨ Welcome back, Learner</div>
-      <h1 class="font-display" style="font-size:32px;margin:10px 0 4px">Master every tense — one adventure at a time.</h1>
+      <h1 class="font-display" style="font-size:32px;margin:10px 0 4px">Master every rule of English grammar — one adventure at a time.</h1>
       <p style="color:var(--muted);max-width:520px;margin:0 auto">Explore fourteen themed worlds. Unlock lessons. Turn Class 8 grammar into a beautiful, cinematic journey.</p>
       <div style="display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap">
         ${curLesson?`<a class="btn btn-primary" href="#/tq/lesson/${curLesson.id}">Continue: ${curLesson.title} →</a>`:''}
@@ -223,7 +226,7 @@ function renderHome(){
         const needsReview = worldNeedsReview(i);
         const done = w.lessons.filter(l=>STATE.completed.includes(l.id)).length;
         const href = unlocked ? '#/tq/world/'+w.id : '#';
-        const clickAttr = needsReview ? `onclick="__openWorldReview(${i});return false;"` : '';
+        const clickAttr = needsReview ? `onclick="__openWorldReview();return false;"` : '';
         return `<a class="world-card" href="${href}" ${clickAttr} style="background:${grad(w.gradient)};${unlocked||needsReview?'':'filter:grayscale(.6);opacity:.55;pointer-events:none'}">
           <div style="display:flex;align-items:center;gap:14px">
             <div style="font-size:32px">${unlocked?w.icon:(needsReview?'📝':'🔒')}</div>
@@ -255,7 +258,7 @@ function renderWorldMap(){
         const done = w.lessons.filter(l=>STATE.completed.includes(l.id)).length;
         const pct = Math.round(done/w.lessons.length*100);
         const href = unlocked ? '#/tq/world/'+w.id : '#';
-        const clickAttr = needsReview ? `onclick="__openWorldReview(${i});return false;"` : '';
+        const clickAttr = needsReview ? `onclick="__openWorldReview();return false;"` : '';
         return `<a class="world-card" href="${href}" ${clickAttr} style="background:${grad(w.gradient)};${unlocked||needsReview?'':'filter:grayscale(.6);opacity:.55;pointer-events:none'}">
           <div style="display:flex;align-items:center;gap:14px">
             <div style="font-size:32px">${unlocked?w.icon:(needsReview?'📝':'🔒')}</div>
