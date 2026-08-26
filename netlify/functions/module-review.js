@@ -15,6 +15,7 @@ const SUBJECT_NAMES = {
   no: 'Math (Math Odyssey — number systems)',
   sc: 'Science (Curiosity Quest — cells to the cosmos)',
   hi: 'Hindi (Malhar — poetry, stories, and literature)',
+  pv: 'English (Poorvi — stories, poems, and biographies)',
   cv: 'Civics (Vote Quest — elections and democracy)',
   tr: 'Geography (Trade Quest — factors of production)',
 };
