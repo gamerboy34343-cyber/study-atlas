@@ -1,6 +1,9 @@
 function noInit(){
 
-const CU = window.CURRICULUM;
+const noClassId = localStorage.getItem('atlas-class') || '8';
+const CU_EN = (noClassId!=='8' && window['CURRICULUM_'+noClassId]) ? window['CURRICULUM_'+noClassId] : window.CURRICULUM;
+const CU_HI = (noClassId!=='8' && window['CURRICULUM_'+noClassId+'_HI']) ? window['CURRICULUM_'+noClassId+'_HI'] : window.CURRICULUM_HI;
+const CU = (typeof atlasMergeHindiCurriculum==='function') ? atlasMergeHindiCurriculum(CU_EN, CU_HI) : CU_EN;
 const ACHIEVEMENTS = [
   {id:'first-steps', title:'First Steps', icon:'👣', desc:'Complete your first lesson.'},
   {id:'perfect-lesson', title:'Perfect Lesson', icon:'💯', desc:'Get every question right in a lesson.'},
@@ -15,7 +18,7 @@ const AVATARS = [{id:'explorer',emoji:'🧭'},{id:'scribe',emoji:'🧑‍🎓'},
 const PETS = [{id:'owl',emoji:'🦉'},{id:'fox',emoji:'🦊'},{id:'cat',emoji:'🐱'},{id:'dragon',emoji:'🐉'}];
 
 /* ============================== STATE ============================== */
-const STORE_KEY = 'math-odyssey-save-v1';
+const STORE_KEY = 'math-odyssey-save-v1' + (noClassId!=='8' ? '-c'+noClassId : '');
 function defaultState(){ return {xp:0,coins:60,diamonds:0,scrolls:0,keys:0,hearts:5,streak:1,lastPlayed:null,completed:{},badges:[],ownedAvatars:['explorer'],ownedPets:['owl'],ownedCostumes:[],avatar:'explorer',pet:'owl',costume:null,weakTopics:[],wheelClaimed:null,bestCombo:0}; }
 function loadState(){
   try{

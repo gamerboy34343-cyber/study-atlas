@@ -1547,29 +1547,88 @@ button{font-family:inherit;cursor:pointer;}
 <script src="profile.js"></script>
 <script src="mistakes.js"></script>
 <script src="review.js"></script>
+<script src="modules/lang.js"></script>
 <script src="modules/curriculum.js"></script>
+<script src="modules/curriculum_5.js"></script>
+<script src="modules/curriculum_6.js"></script>
+<script src="modules/curriculum_7.js"></script>
+<script src="modules/curriculum_hi.js"></script>
+<script src="modules/curriculum_5_hi.js"></script>
+<script src="modules/curriculum_6_hi.js"></script>
+<script src="modules/curriculum_7_hi.js"></script>
 <script src="modules/bb.js"></script>
+<script src="modules/cq_hi.js"></script>
 <script src="modules/cq.js"></script>
+<script src="modules/mr_hi.js"></script>
 <script src="modules/mr.js"></script>
+<script src="modules/co_hi.js"></script>
 <script src="modules/co.js"></script>
+<script src="modules/gq_hi.js"></script>
 <script src="modules/gq.js"></script>
 <script src="modules/tq.js"></script>
 <script src="modules/science_curriculum.js"></script>
+<script src="modules/science_curriculum_5.js"></script>
+<script src="modules/science_curriculum_6.js"></script>
+<script src="modules/science_curriculum_7.js"></script>
+<script src="modules/science_curriculum_hi.js"></script>
+<script src="modules/science_curriculum_5_hi.js"></script>
+<script src="modules/science_curriculum_6_hi.js"></script>
+<script src="modules/science_curriculum_7_hi.js"></script>
 <script src="modules/hindi_curriculum.js"></script>
+<script src="modules/hindi_curriculum_5.js"></script>
+<script src="modules/hindi_curriculum_6.js"></script>
+<script src="modules/hindi_curriculum_7.js"></script>
 <script src="modules/poorvi_curriculum.js"></script>
+<script src="modules/poorvi_curriculum_5.js"></script>
+<script src="modules/poorvi_curriculum_6.js"></script>
+<script src="modules/poorvi_curriculum_7.js"></script>
 <script src="modules/no.js"></script>
 <script src="modules/sc.js"></script>
 <script src="modules/hi.js"></script>
 <script src="modules/pv.js"></script>
+<script src="modules/cv_hi.js"></script>
 <script src="modules/cv.js"></script>
+<script src="modules/tr_hi.js"></script>
 <script src="modules/tr.js"></script>
+<script src="modules/tb_hi.js"></script>
+<script src="modules/tb.js"></script>
+<script src="modules/dk_hi.js"></script>
+<script src="modules/dk.js"></script>
+<script src="modules/ga_hi.js"></script>
+<script src="modules/ga.js"></script>
+<script src="modules/sg_hi.js"></script>
+<script src="modules/sg.js"></script>
+<script src="modules/gv_hi.js"></script>
+<script src="modules/gv.js"></script>
+<script src="modules/cm_hi.js"></script>
+<script src="modules/cm.js"></script>
+<script src="modules/tz_hi.js"></script>
+<script src="modules/tz.js"></script>
+<script src="modules/rb_hi.js"></script>
+<script src="modules/rb.js"></script>
+<script src="modules/uq_hi.js"></script>
+<script src="modules/uq.js"></script>
+<script src="modules/pq_hi.js"></script>
+<script src="modules/pq.js"></script>
+<script src="modules/wt_hi.js"></script>
+<script src="modules/wt.js"></script>
+<script src="modules/wq_hi.js"></script>
+<script src="modules/wq.js"></script>
+<script src="modules/hh_hi.js"></script>
+<script src="modules/hh.js"></script>
+<script src="modules/ii_hi.js"></script>
+<script src="modules/ii.js"></script>
+<script src="modules/et_hi.js"></script>
+<script src="modules/et.js"></script>
+<script src="modules/re_hi.js"></script>
+<script src="modules/re.js"></script>
 <script src="studybot.js"></script>
 <script src="leaderboard.js"></script>
 <script src="shop.js"></script>
 <script src="adaptive.js"></script>
 <script>
 const content = document.getElementById('content');
-const SUBJECT_PREFIXES = ['bb','cq','mr','co','gq','tq','no','sc','hi','pv','cv','tr'];
+const SUBJECT_PREFIXES = ['bb','cq','mr','co','gq','tq','no','sc','hi','pv','cv','tr','tb','dk','ga','sg','gv','cm','tz','rb','uq','pq','wt','wq','hh','ii','et','re'];
 const SUBJECTS_INFO = [
   {prefix:'bb', emoji:'🧪', name:'Bond Builder', sub:'Ionic & Covalent Bonds — Chemistry'},
   {prefix:'cq', emoji:'🏰', name:'Empire Chronicles', sub:'Medieval India — History'},
@@ -1583,13 +1642,29 @@ const SUBJECTS_INFO = [
   {prefix:'pv', emoji:'🌅', name:'Poorvi', sub:'Stories, Poems & Real Lives — English'},
   {prefix:'cv', emoji:'🗳️', name:'Vote Quest', sub:'Elections & Democracy — Civics'},
   {prefix:'tr', emoji:'💰', name:'Trade Quest', sub:'Factors of Production — Geography'},
+  {prefix:'tb', emoji:'🌦️', name:'Terra Bharat Quest', sub:"India's Geography, Weather & Climate — Geography"},
+  {prefix:'dk', emoji:'🦚', name:'Dawn of Kingdoms', sub:'Mahajanapadas to the Mighty Mauryas — History'},
+  {prefix:'ga', emoji:'🎭', name:'Golden Age Quest', sub:'Shungas to the Gupta Classical Age — History'},
+  {prefix:'sg', emoji:'🙏', name:'Sacred Geography Quest', sub:'Pilgrimage, Rivers & Sacred Sites — Culture'},
+  {prefix:'gv', emoji:'⚖️', name:'Governance Quest', sub:'Types of Government & the Constitution — Civics'},
+  {prefix:'cm', emoji:'🪙', name:'Coin & Market Quest', sub:'Barter, Money & Markets — Economics'},
+  {prefix:'tz', emoji:'🧭', name:'Terra Quest', sub:'Maps, Oceans & Landforms — Geography'},
+  {prefix:'rb', emoji:'📜', name:'Roots of Bharat', sub:'Harappa, the Vedas & the Buddha — History'},
+  {prefix:'uq', emoji:'🤝', name:'Unity Quest', sub:'Family, Community & Unity in Diversity'},
+  {prefix:'pq', emoji:'🏛️', name:'Panchayat Quest', sub:'Governance, Panchayati Raj & Urban Bodies — Civics'},
+  {prefix:'wt', emoji:'💰', name:'Work & Trade Quest', sub:'Economic Activities & Sectors — Economics'},
+  {prefix:'wq', emoji:'💧', name:'Water Wonders Quest', sub:'Rivers, Water Cycle & Freshwater Life — EVS'},
+  {prefix:'hh', emoji:'🔬', name:'Health & Habitat Quest', sub:'Food, Microbes & the Green School — EVS'},
+  {prefix:'ii', emoji:'🇮🇳', name:'Incredible India Quest', sub:'National Symbols & Unique Places — EVS'},
+  {prefix:'et', emoji:'⚡', name:'Energy & Threads Quest', sub:'Energy Sources & How Cloth is Made — EVS'},
+  {prefix:'re', emoji:'🌍', name:'Rhythms of Earth Quest', sub:'Seasons & Our Shared Planet — EVS'},
 ];
 let activeSubject = null;
 const CLASSES = [
-  {id:'5', label:'Class 5', ready:false},
-  {id:'6', label:'Class 6', ready:false},
-  {id:'7', label:'Class 7', ready:false},
-  {id:'8', label:'Class 8', ready:true},
+  {id:'5', label:'Class 5', ready:['no','sc','pv','hi','wq','hh','ii','et','re']},
+  {id:'6', label:'Class 6', ready:['no','sc','pv','hi','tz','rb','uq','pq','wt']},
+  {id:'7', label:'Class 7', ready:['no','sc','pv','hi','tb','dk','ga','sg','gv','cm']},
+  {id:'8', label:'Class 8', ready:'all'},
 ];
 let selectedClass = localStorage.getItem('atlas-class');
 function setClass(id){
@@ -1721,20 +1796,85 @@ function renderClassPicker(){
       <p>Which class are you in?</p>
     </div>
     <div class="subject-grid">
-      ${CLASSES.map(c=>`<a class="subject-card" href="#" onclick="setClass('${c.id}');return false;">
-        <div class="em">${c.ready?'📘':'🔒'}</div>
+      ${CLASSES.map(c=>{
+        const anyReady = c.ready==='all' || (Array.isArray(c.ready) && c.ready.length>0);
+        return `<a class="subject-card" href="#" onclick="setClass('${c.id}');return false;">
+        <div class="em">${anyReady?'📘':'🔒'}</div>
         <h3>${c.label}</h3>
-        <p>${c.ready?'Ready to explore':'Coming soon'}</p>
-      </a>`).join('')}
+        <p>${anyReady?'Ready to explore':'Coming soon'}</p>
+      </a>`;
+      }).join('')}
     </div>
   </div>`;
+}
+
+function subjectCardHtml(prefix, cls){
+  if(prefix==='no'){
+    const href = cls.id==='8' ? '#/maths' : '#/no';
+    return `<a class="subject-card" href="${href}">
+        <div class="em">🔢</div>
+        <h3>Maths</h3>
+        <p>Numbers, Algebra, Geometry &amp; Data — Math Odyssey.</p>
+      </a>`;
+  }
+  if(prefix==='sc'){
+    const href = cls.id==='8' ? '#/science' : '#/sc';
+    if(cls.id==='5'){
+      return `<a class="subject-card" href="${href}">
+        <div class="em">🌍</div>
+        <h3>The World Around Us</h3>
+        <p>Water, health, incredible India, everyday energy &amp; our planet — Our Wondrous World.</p>
+      </a>`;
+    }
+    return `<a class="subject-card" href="${href}">
+        <div class="em">🔬</div>
+        <h3>Science</h3>
+        <p>Chemistry, Physics &amp; Biology — Curiosity Quest.</p>
+      </a>`;
+  }
+  if(prefix==='pv' && cls.id==='5'){
+    return `<a class="subject-card" href="#/pv">
+        <div class="em">🌈</div>
+        <h3>Santoor</h3>
+        <p>Poems &amp; stories full of fun and colour — English.</p>
+      </a>`;
+  }
+  if(prefix==='hi' && cls.id==='5'){
+    return `<a class="subject-card" href="#/hi">
+        <div class="em">🌙</div>
+        <h3>वीणा</h3>
+        <p>कविता, कहानी और यात्राएँ — हिंदी।</p>
+      </a>`;
+  }
+  if(prefix==='social'){
+    return `<a class="subject-card" href="#/social">
+        <div class="em">🏛️</div>
+        <h3>Social Studies</h3>
+        <p>History, Civics &amp; Geography — Empire Chronicles, Maratha Quest, Colonial Quest, Vote Quest, Gaia Quest and Trade Quest.</p>
+      </a>`;
+  }
+  const s = SUBJECTS_INFO.find(x=>x.prefix===prefix);
+  if(!s) return '';
+  return `<a class="subject-card" href="#/${s.prefix}">
+        <div class="em">${s.emoji}</div>
+        <h3>${s.name}</h3>
+        <p>${s.sub}</p>
+      </a>`;
 }
 
 function renderHome(){
   if(!selectedClass){ renderClassPicker(); return; }
   const cls = CLASSES.find(c=>c.id===selectedClass);
   const classPill = `<p style="margin:-6px 0 18px"><a href="#" onclick="selectedClass=null;renderClassPicker();return false;">Class ${selectedClass} · Change class</a></p>`;
-  if(!cls || !cls.ready){
+  const langPill = `<p style="margin:-6px 0 18px">
+    <a href="#" onclick="setLang('en');return false;" style="${window.ATLAS_LANG==='en'?'font-weight:800;color:var(--shell-primary)':''}">English</a>
+    &nbsp;·&nbsp;
+    <a href="#" onclick="setLang('hi');return false;" style="${window.ATLAS_LANG==='hi'?'font-weight:800;color:var(--shell-primary)':''}">हिंदी माध्यम</a>
+  </p>`;
+  if(!cls){ renderClassPicker(); return; }
+  const isFull = cls.ready==='all';
+  const readyPrefixes = isFull ? [] : (cls.ready||[]);
+  if(!isFull && readyPrefixes.length===0){
     content.innerHTML = `<div class="home-wrap">
       <div class="home-hero">
         <div class="badge">🗺</div>
@@ -1745,35 +1885,23 @@ function renderHome(){
     </div>`;
     return;
   }
+  const subjectCards = isFull
+    ? `${SUBJECTS_INFO.filter(s=>!['cq','mr','co','gq','cv','tr','bb','no','sc'].includes(s.prefix)).map(s=>subjectCardHtml(s.prefix,cls)).join('')}
+       ${subjectCardHtml('sc',cls)}
+       ${subjectCardHtml('no',cls)}
+       ${subjectCardHtml('social',cls)}`
+    : readyPrefixes.map(p=>subjectCardHtml(p,cls)).join('');
   content.innerHTML = `<div class="home-wrap">
     <div class="home-hero">
       <div class="badge">🗺</div>
       <h1 class="font-display">The Study Atlas</h1>
-      <p>Six subjects, one shelf. Pick a world to explore, or ask the Study Bot to read a PDF for you.</p>
+      <p>${isFull ? 'Six subjects, one shelf. Pick a world to explore, or ask the Study Bot to read a PDF for you.' : 'More subjects for this class are on the way — start with what\'s ready!'}</p>
     </div>
     ${classPill}
+    ${langPill}
     <div id="home-ap-teaser"></div>
     <div class="subject-grid">
-      ${SUBJECTS_INFO.filter(s=>!['cq','mr','co','gq','cv','tr','bb','no','sc'].includes(s.prefix)).map(s=>`<a class="subject-card" href="#/${s.prefix}">
-        <div class="em">${s.emoji}</div>
-        <h3>${s.name}</h3>
-        <p>${s.sub}</p>
-      </a>`).join('')}
-      <a class="subject-card" href="#/science">
-        <div class="em">🔬</div>
-        <h3>Science</h3>
-        <p>Chemistry, Physics &amp; Biology — Bond Builder and Curiosity Quest.</p>
-      </a>
-      <a class="subject-card" href="#/maths">
-        <div class="em">🔢</div>
-        <h3>Maths</h3>
-        <p>Numbers, Algebra, Geometry &amp; Data — Math Odyssey.</p>
-      </a>
-      <a class="subject-card" href="#/social">
-        <div class="em">🏛️</div>
-        <h3>Social Studies</h3>
-        <p>History, Civics &amp; Geography — Empire Chronicles, Maratha Quest, Colonial Quest, Vote Quest, Gaia Quest and Trade Quest.</p>
-      </a>
+      ${subjectCards}
       <a class="subject-card bot-card" href="#/studybot">
         <div class="em">🤖</div>
         <h3>Study Bot</h3>

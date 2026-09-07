@@ -1,6 +1,7 @@
 function hiInit(){
 
-const CU = window.HINDI_CURRICULUM;
+const hiClassId = localStorage.getItem('atlas-class') || '8';
+const CU = (hiClassId!=='8' && window['HINDI_CURRICULUM_'+hiClassId]) ? window['HINDI_CURRICULUM_'+hiClassId] : window.HINDI_CURRICULUM;
 const ACHIEVEMENTS = [
   {id:'first-steps', title:'First Steps', icon:'👣', desc:'Complete your first lesson.'},
   {id:'perfect-lesson', title:'Perfect Lesson', icon:'💯', desc:'Get every question right in a lesson.'},
@@ -15,7 +16,7 @@ const AVATARS = [{id:'explorer',emoji:'📖'},{id:'scribe',emoji:'✍️'},{id:'
 const PETS = [{id:'owl',emoji:'🦚'},{id:'fox',emoji:'🐦'},{id:'cat',emoji:'🕊️'},{id:'dragon',emoji:'🦜'}];
 
 /* ============================== STATE ============================== */
-const STORE_KEY = 'malhar-save-v1';
+const STORE_KEY = 'malhar-save-v1' + (hiClassId!=='8' ? '-c'+hiClassId : '');
 function defaultState(){ return {xp:0,coins:60,diamonds:0,scrolls:0,keys:0,hearts:5,streak:1,lastPlayed:null,completed:{},badges:[],ownedAvatars:['explorer'],ownedPets:['owl'],ownedCostumes:[],avatar:'explorer',pet:'owl',costume:null,weakTopics:[],wheelClaimed:null,bestCombo:0}; }
 function loadState(){
   try{
@@ -166,8 +167,8 @@ function renderHome(){
   const body = `
     <div class="card" style="text-align:center">
       <div style="font-size:40px;display:flex;justify-content:center;gap:6px">${avatarEmoji}${petEmoji}</div>
-      <h1 class="font-display" style="font-size:30px;margin:8px 0 4px">मल्हार</h1>
-      <p style="color:var(--muted);max-width:520px;margin:0 auto">कविता, कहानी, पत्र और उद्बोधन — दस अध्यायों की इस साहित्यिक यात्रा में हर भाव, हर पंक्ति को गहराई से महसूस करें।</p>
+      <h1 class="font-display" style="font-size:30px;margin:8px 0 4px">${hiClassId==='5'?'वीणा':'मल्हार'}</h1>
+      <p style="color:var(--muted);max-width:520px;margin:0 auto">${hiClassId==='5'?'कविता, कहानी और पत्र — बारह पाठों की इस यात्रा में हर भाव, हर पंक्ति को गहराई से महसूस करें।':'कविता, कहानी, पत्र और उद्बोधन — दस अध्यायों की इस साहित्यिक यात्रा में हर भाव, हर पंक्ति को गहराई से महसूस करें।'}</p>
       <div style="margin-top:18px">
         ${curTarget?`<a class="btn btn-primary" href="#/hi/lesson/${curTarget.w.id}/${curTarget.l.id}">${doneLessons?'Continue':'Start'} the adventure →</a>`:`<div class="btn btn-primary" style="display:inline-block">🏆 All missions recovered!</div>`}
       </div>
