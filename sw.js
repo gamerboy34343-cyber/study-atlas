@@ -2,7 +2,7 @@
    and reopens instantly, while leaving Supabase/API calls untouched (always
    go to the network; the app already handles being offline for those). */
 
-const CACHE_VERSION = 'study-atlas-v36';
+const CACHE_VERSION = 'study-atlas-v37';
 
 const PRECACHE_URLS = [
   './',
@@ -22,6 +22,7 @@ const PRECACHE_URLS = [
   'modules/curriculum_5.js',
   'modules/curriculum_6.js',
   'modules/curriculum_7.js',
+  'modules/curriculum_9.js',
   'modules/curriculum_hi.js',
   'modules/curriculum_5_hi.js',
   'modules/curriculum_6_hi.js',
