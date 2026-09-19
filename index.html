@@ -1608,6 +1608,14 @@ button{font-family:inherit;cursor:pointer;}
 <div id="app"></div>
 </template>
 
+<template id="tpl-ph">
+<div id="app"></div>
+</template>
+
+<template id="tpl-ch">
+<div id="app"></div>
+</template>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="supabase-config.js"></script>
@@ -1624,6 +1632,9 @@ button{font-family:inherit;cursor:pointer;}
 <script src="modules/society_curriculum_9.js"></script>
 <script src="modules/curriculum_10.js"></script>
 <script src="modules/society_curriculum_10.js"></script>
+<script src="modules/curriculum_11.js"></script>
+<script src="modules/physics_curriculum_11.js"></script>
+<script src="modules/chemistry_curriculum_11.js"></script>
 <script src="modules/curriculum_hi.js"></script>
 <script src="modules/curriculum_5_hi.js"></script>
 <script src="modules/curriculum_6_hi.js"></script>
@@ -1697,13 +1708,15 @@ button{font-family:inherit;cursor:pointer;}
 <script src="modules/re_hi.js"></script>
 <script src="modules/re.js"></script>
 <script src="modules/ss.js"></script>
+<script src="modules/ph.js"></script>
+<script src="modules/ch.js"></script>
 <script src="studybot.js"></script>
 <script src="leaderboard.js"></script>
 <script src="shop.js"></script>
 <script src="adaptive.js"></script>
 <script>
 const content = document.getElementById('content');
-const SUBJECT_PREFIXES = ['bb','cq','mr','co','gq','tq','no','sc','hi','pv','cv','tr','tb','dk','ga','sg','gv','cm','tz','rb','uq','pq','wt','wq','hh','ii','et','re','ss'];
+const SUBJECT_PREFIXES = ['bb','cq','mr','co','gq','tq','no','sc','hi','pv','cv','tr','tb','dk','ga','sg','gv','cm','tz','rb','uq','pq','wt','wq','hh','ii','et','re','ss','ph','ch'];
 const SUBJECTS_INFO = [
   {prefix:'bb', emoji:'🧪', name:'Bond Builder', sub:'Ionic & Covalent Bonds — Chemistry'},
   {prefix:'cq', emoji:'🏰', name:'Empire Chronicles', sub:'Medieval India — History'},
@@ -1742,7 +1755,7 @@ const CLASSES = [
   {id:'8', label:'Class 8', ready:'all'},
   {id:'9', label:'Class 9', ready:['no','sc','ss']},
   {id:'10', label:'Class 10', ready:['no','sc','ss']},
-  {id:'11', label:'Class 11', ready:[]},
+  {id:'11', label:'Class 11', ready:['no','ph','ch']},
   {id:'12', label:'Class 12', ready:[]},
 ];
 let selectedClass = localStorage.getItem('atlas-class');
@@ -1937,6 +1950,20 @@ function subjectCardHtml(prefix, cls){
         <div class="em">🏛️</div>
         <h3>Social Science</h3>
         <p>History, Geography, Civics &amp; Economics as one story — Understanding Society.</p>
+      </a>`;
+  }
+  if(prefix==='ph'){
+    return `<a class="subject-card" href="#/ph">
+        <div class="em">🪐</div>
+        <h3>Physics</h3>
+        <p>Mechanics, thermodynamics &amp; waves — Physics Odyssey.</p>
+      </a>`;
+  }
+  if(prefix==='ch'){
+    return `<a class="subject-card" href="#/ch">
+        <div class="em">⚗️</div>
+        <h3>Chemistry</h3>
+        <p>Atoms, bonding &amp; organic chemistry — Elemental Forge.</p>
       </a>`;
   }
   const s = SUBJECTS_INFO.find(x=>x.prefix===prefix);
