@@ -1616,6 +1616,10 @@ button{font-family:inherit;cursor:pointer;}
 <div id="app"></div>
 </template>
 
+<template id="tpl-ai">
+<div id="app"></div>
+</template>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="supabase-config.js"></script>
@@ -1635,6 +1639,13 @@ button{font-family:inherit;cursor:pointer;}
 <script src="modules/curriculum_11.js"></script>
 <script src="modules/physics_curriculum_11.js"></script>
 <script src="modules/chemistry_curriculum_11.js"></script>
+<script src="modules/ai_curriculum_4.js"></script>
+<script src="modules/ai_curriculum_5.js"></script>
+<script src="modules/ai_curriculum_6.js"></script>
+<script src="modules/ai_curriculum_7.js"></script>
+<script src="modules/ai_curriculum_8.js"></script>
+<script src="modules/ai_curriculum_9.js"></script>
+<script src="modules/ai_curriculum_10.js"></script>
 <script src="modules/curriculum_hi.js"></script>
 <script src="modules/curriculum_5_hi.js"></script>
 <script src="modules/curriculum_6_hi.js"></script>
@@ -1710,13 +1721,14 @@ button{font-family:inherit;cursor:pointer;}
 <script src="modules/ss.js"></script>
 <script src="modules/ph.js"></script>
 <script src="modules/ch.js"></script>
+<script src="modules/ai.js"></script>
 <script src="studybot.js"></script>
 <script src="leaderboard.js"></script>
 <script src="shop.js"></script>
 <script src="adaptive.js"></script>
 <script>
 const content = document.getElementById('content');
-const SUBJECT_PREFIXES = ['bb','cq','mr','co','gq','tq','no','sc','hi','pv','cv','tr','tb','dk','ga','sg','gv','cm','tz','rb','uq','pq','wt','wq','hh','ii','et','re','ss','ph','ch'];
+const SUBJECT_PREFIXES = ['bb','cq','mr','co','gq','tq','no','sc','hi','pv','cv','tr','tb','dk','ga','sg','gv','cm','tz','rb','uq','pq','wt','wq','hh','ii','et','re','ss','ph','ch','ai'];
 const SUBJECTS_INFO = [
   {prefix:'bb', emoji:'🧪', name:'Bond Builder', sub:'Ionic & Covalent Bonds — Chemistry'},
   {prefix:'cq', emoji:'🏰', name:'Empire Chronicles', sub:'Medieval India — History'},
@@ -1749,12 +1761,13 @@ const SUBJECTS_INFO = [
 ];
 let activeSubject = null;
 const CLASSES = [
-  {id:'5', label:'Class 5', ready:['no','sc','pv','hi','wq','hh','ii','et','re']},
-  {id:'6', label:'Class 6', ready:['no','sc','pv','hi','tz','rb','uq','pq','wt']},
-  {id:'7', label:'Class 7', ready:['no','sc','pv','hi','tb','dk','ga','sg','gv','cm']},
+  {id:'4', label:'Class 4', ready:['ai']},
+  {id:'5', label:'Class 5', ready:['no','sc','pv','hi','wq','hh','ii','et','re','ai']},
+  {id:'6', label:'Class 6', ready:['no','sc','pv','hi','tz','rb','uq','pq','wt','ai']},
+  {id:'7', label:'Class 7', ready:['no','sc','pv','hi','tb','dk','ga','sg','gv','cm','ai']},
   {id:'8', label:'Class 8', ready:'all'},
-  {id:'9', label:'Class 9', ready:['no','sc','ss']},
-  {id:'10', label:'Class 10', ready:['no','sc','ss']},
+  {id:'9', label:'Class 9', ready:['no','sc','ss','ai']},
+  {id:'10', label:'Class 10', ready:['no','sc','ss','ai']},
   {id:'11', label:'Class 11', ready:[]},
   {id:'12', label:'Class 12', ready:[]},
 ];
@@ -1966,6 +1979,13 @@ function subjectCardHtml(prefix, cls){
         <p>Atoms, bonding &amp; organic chemistry — Elemental Forge.</p>
       </a>`;
   }
+  if(prefix==='ai'){
+    return `<a class="subject-card" href="#/ai">
+        <div class="em">🤖</div>
+        <h3>AI &amp; Computational Thinking</h3>
+        <p>Patterns, logic &amp; how machines learn — AI &amp; CT Quest.</p>
+      </a>`;
+  }
   const s = SUBJECTS_INFO.find(x=>x.prefix===prefix);
   if(!s) return '';
   return `<a class="subject-card" href="#/${s.prefix}">
@@ -2002,7 +2022,8 @@ function renderHome(){
     ? `${SUBJECTS_INFO.filter(s=>!['cq','mr','co','gq','cv','tr','bb','no','sc'].includes(s.prefix)).map(s=>subjectCardHtml(s.prefix,cls)).join('')}
        ${subjectCardHtml('sc',cls)}
        ${subjectCardHtml('no',cls)}
-       ${subjectCardHtml('social',cls)}`
+       ${subjectCardHtml('social',cls)}
+       ${subjectCardHtml('ai',cls)}`
     : readyPrefixes.map(p=>subjectCardHtml(p,cls)).join('');
   content.innerHTML = `<div class="home-wrap">
     <div class="home-hero">
