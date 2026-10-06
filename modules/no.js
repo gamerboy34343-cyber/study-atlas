@@ -310,7 +310,7 @@ function renderLesson(worldId, lessonId){
   if(!isNodeUnlocked(worldId, lessonId)){ renderHome(); return; }
   const grad = `linear-gradient(150deg, ${w.palette.from}, ${w.palette.to})`;
   let stage = 'story', teachIdx=0, qIdx=0, correctCount=0, combo=0, bestCombo=0, hearts=STATE.hearts, weak=[], status='none', qState={};
-  const questions = lesson.questions;
+  const questions = atlasShuffleMcq(lesson.questions);
   const Q = questions.length;
 
   function topHeader(progressFrac){

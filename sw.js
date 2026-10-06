@@ -2,7 +2,7 @@
    and reopens instantly, while leaving Supabase/API calls untouched (always
    go to the network; the app already handles being offline for those). */
 
-const CACHE_VERSION = 'study-atlas-v46';
+const CACHE_VERSION = 'study-atlas-v47';
 
 const PRECACHE_URLS = [
   './',

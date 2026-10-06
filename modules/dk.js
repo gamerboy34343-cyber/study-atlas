@@ -411,7 +411,7 @@ function renderWorld(slug){
 /* ---------------- LESSON PLAYER ---------------- */
 function renderLesson(worldId, levelId){
   const w = WORLDS.find(w=>w.id===worldId);
-  const lv = w?.levels.find(l=>l.id===levelId);
+  const lv = atlasShuffleQuestOptions(w?.levels.find(l=>l.id===levelId));
   if(!w||!lv){ nav('#/dk/'); return; }
   const wIdx = WORLDS.findIndex(x=>x.id===w.id);
   if(!isWorldUnlockedDk(wIdx)){ renderHome(); return; }

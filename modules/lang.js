@@ -11,6 +11,36 @@ function setLang(lang){
   location.reload();
 }
 
+/* mcq options render in stored order and `answer` is an index, so content that
+   stores the correct option first would always show it as "A". Engines call this
+   once per lesson play (after any Hindi merge) to randomise option order and
+   remap `answer`. Options that refer to each other keep their order. */
+const ATLAS_KEEP_ORDER = /\b(all|none|both|neither)\b.{0,14}\b(above|these|options?)\b|\ball of the\b|\bnone of the\b|\bboth\b|\bneither\b|\b[a-d] (and|&) [a-d]\b|\boptions?\b|उपर्युक्त|उपरोक्त|दोनों|इनमें से|सभी विकल्प/i;
+function atlasShuffleMcq(questions){
+  if(!Array.isArray(questions)) return questions;
+  return questions.map(q=>{
+    if(!q || q.kind!=='mcq' || !Array.isArray(q.options) || q.options.length<2) return q;
+    if(!Number.isInteger(q.answer) || q.answer<0 || q.answer>=q.options.length) return q;
+    if(q.options.some(o=>ATLAS_KEEP_ORDER.test(String(o)))) return q;
+    const order = q.options.map((_,i)=>i);
+    for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
+    return Object.assign({}, q, {options: order.map(i=>q.options[i]), answer: order.indexOf(q.answer)});
+  });
+}
+
+/* Same idea for the "quest" engines, whose mcq answers are matched by option TEXT
+   (so only the options order needs to change). Takes a level, returns a copy. */
+function atlasShuffleQuestOptions(lv){
+  if(!lv || !Array.isArray(lv.questions)) return lv;
+  return Object.assign({}, lv, {questions: lv.questions.map(q=>{
+    if(!q || q.type!=='mcq' || !Array.isArray(q.options) || q.options.length<2 || typeof q.answer!=='string') return q;
+    if(q.options.some(o=>ATLAS_KEEP_ORDER.test(String(o)))) return q;
+    const o = q.options.slice();
+    for(let i=o.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [o[i],o[j]]=[o[j],o[i]]; }
+    return Object.assign({}, q, {options: o});
+  })});
+}
+
 function atlasMergeHindiLesson(en, hi){
   if(!hi) return en;
   const merged = Object.assign({}, en);

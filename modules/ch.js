@@ -310,7 +310,7 @@ function renderLesson(worldId, lessonId){
   let stage = 'story', teachIdx=0, qIdx=0, correctCount=0, combo=0, bestCombo=0, hearts=STATE.hearts, weak=[], status='none', qState={};
   let scopeState = { specimen:0, focus:0, _inFocus:false, activeHotspot:null, discovered:new Set() };
   let benchState = { mode:0, dist:70 };
-  const questions = lesson.questions;
+  const questions = atlasShuffleMcq(lesson.questions);
   const Q = questions.length;
 
   function topHeader(progressFrac){
