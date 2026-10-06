@@ -1629,6 +1629,9 @@ button{font-family:inherit;cursor:pointer;}
 <script src="review.js"></script>
 <script src="modules/lang.js"></script>
 <script src="modules/curriculum.js"></script>
+<script src="modules/curriculum_1.js"></script>
+<script src="modules/curriculum_2.js"></script>
+<script src="modules/curriculum_3.js"></script>
 <script src="modules/curriculum_5.js"></script>
 <script src="modules/curriculum_6.js"></script>
 <script src="modules/curriculum_7.js"></script>
@@ -1761,6 +1764,9 @@ const SUBJECTS_INFO = [
 ];
 let activeSubject = null;
 const CLASSES = [
+  {id:'1', label:'Class 1', ready:['no']},
+  {id:'2', label:'Class 2', ready:['no']},
+  {id:'3', label:'Class 3', ready:['no']},
   {id:'4', label:'Class 4', ready:['ai']},
   {id:'5', label:'Class 5', ready:['no','sc','pv','hi','wq','hh','ii','et','re','ai']},
   {id:'6', label:'Class 6', ready:['no','sc','pv','hi','tz','rb','uq','pq','wt','ai']},
@@ -1919,7 +1925,7 @@ function subjectCardHtml(prefix, cls){
     return `<a class="subject-card" href="${href}">
         <div class="em">🔢</div>
         <h3>Maths</h3>
-        <p>Numbers, Algebra, Geometry &amp; Data — Math Odyssey.</p>
+        <p>${['1','2','3'].includes(cls.id) ? 'Counting, shapes, adding &amp; more — Math Odyssey.' : 'Numbers, Algebra, Geometry &amp; Data — Math Odyssey.'}</p>
       </a>`;
   }
   if(prefix==='sc'){

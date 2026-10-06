@@ -170,7 +170,9 @@ function renderHome(){
     <div class="card" style="text-align:center">
       <div style="font-size:40px;display:flex;justify-content:center;gap:6px">${avatarEmoji}${petEmoji}</div>
       <h1 class="font-display" style="font-size:30px;margin:8px 0 4px">Math Odyssey</h1>
-      <p style="color:var(--muted);max-width:520px;margin:0 auto">The Number Thief has stolen the history of mathematics. Travel eleven civilisations, recover every lost number system and unlock the greatest invention of all — zero.</p>
+      <p style="color:var(--muted);max-width:520px;margin:0 auto">${['1','2','3'].includes(noClassId)
+        ? 'Numbers are hiding all over the land! Count, add and solve puzzles to find them, and beat every boss.'
+        : 'The Number Thief has stolen the history of mathematics. Travel eleven civilisations, recover every lost number system and unlock the greatest invention of all — zero.'}</p>
       <div style="margin-top:18px">
         ${curTarget?`<a class="btn btn-primary" href="#/no/lesson/${curTarget.w.id}/${curTarget.l.id}">${doneLessons?'Continue':'Start'} the adventure →</a>`:`<div class="btn btn-primary" style="display:inline-block">🏆 All missions recovered!</div>`}
       </div>
